@@ -295,7 +295,7 @@ nav {
       <label class="consent-box">
         <input type="checkbox" id="consent">
         <span class="consent-text">
-          Compreendo que o meu <strong>email</strong> é guardado separadamente dos meus dados de uso, identificados apenas pelo anon_id. <strong>Os meus dados de saúde nunca são persistidos.</strong> Aceito os termos de privacidade.
+          Compreendo que o meu <strong>email</strong> é guardado separadamente do meu perfil clínico. <strong>Os dados de perfil são guardados noutra base e ligados apenas por um token interno.</strong> Aceito os termos de privacidade.
         </span>
       </label>
       <span class="form-error" id="consent-error"></span>
@@ -319,7 +319,7 @@ nav {
 <script src="auth.js"></script>
 <script>
   renderNav('register');
-  Auth.redirectIfAuth('gerar.html');
+  Auth.redirectIfAuth('profile.html', 'gerar.html');
 
   Auth.getAnonId();
 

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil clinico - UpWell</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #6FE3C1;
+  --primary-dark: #3BC6A4;
+  --bg: #F4FFFB;
+  --surface: #FFFFFF;
+  --text-primary: #1F2D2A;
+  --text-secondary: #5F7D75;
+  --error: #E53E3E;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-xl: 36px;
+  --shadow-md: 0 8px 32px rgba(31,45,42,0.08);
+  --shadow-lg: 0 20px 60px rgba(31,45,42,0.1);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(244,255,251,0.9);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(111,227,193,0.2);
+  padding: 0 40px; height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-slot {
+  width: 38px; height: 38px; border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.site-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: var(--text-primary); }
+.nav-links { display: flex; align-items: center; gap: 6px; }
+.nav-link {
+  font-size: 14px; font-weight: 500; color: var(--text-secondary);
+  text-decoration: none; padding: 8px 14px; border-radius: var(--radius-sm);
+}
+.nav-link.active { color: var(--primary-dark); font-weight: 600; }
+.btn-nav-ghost {
+  background: transparent; color: var(--text-secondary);
+  font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(95,125,117,0.22); cursor: pointer;
+}
+
+.page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.hero-card, .form-card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(111,227,193,0.2);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero-card {
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top right, rgba(111,227,193,0.2), transparent 35%),
+    linear-gradient(135deg, rgba(111,227,193,0.08), rgba(255,255,255,0));
+  pointer-events: none;
+}
+
+.hero-card > * { position: relative; z-index: 1; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(111,227,193,0.12);
+  border: 1px solid rgba(111,227,193,0.26);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px; font-weight: 600; color: var(--primary-dark);
+  margin-bottom: 16px;
+}
+
+.hero-card h1 {
+  font-size: clamp(30px, 4vw, 42px);
+  line-height: 1.08;
+  margin-bottom: 14px;
+}
+
+.hero-card p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 55ch;
+}
+
+.aside {
+  background: linear-gradient(180deg, #1F2D2A, #28423D);
+  color: rgba(255,255,255,0.88);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  box-shadow: var(--shadow-md);
+}
+
+.aside h2 { font-size: 18px; margin-bottom: 14px; }
+.aside ul { list-style: none; display: grid; gap: 12px; }
+.aside li {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255,255,255,0.06);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.form-card {
+  padding: 32px;
+}
+
+.section-title {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  margin-bottom: 22px;
+}
+
+.section-title h2 { font-size: 24px; }
+.section-title p { color: var(--text-secondary); font-size: 14px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.full { grid-column: 1 / -1; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 13px; font-weight: 600; }
+.form-hint { font-size: 12px; color: var(--text-secondary); }
+.form-error { font-size: 12px; color: var(--error); display: none; }
+.form-error.visible { display: block; }
+
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid rgba(95,125,117,0.22);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  background: var(--surface);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.form-input:focus, .form-textarea:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(111,227,193,0.2);
+}
+
+.form-textarea { min-height: 108px; resize: vertical; }
+.input-error { border-color: var(--error) !important; }
+
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  display: none;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.alert.visible { display: flex; }
+.alert-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+.alert-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+
+.privacy-box {
+  margin: 22px 0;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  background: rgba(111,227,193,0.08);
+  border: 1px solid rgba(111,227,193,0.22);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px;
+  padding: 13px 24px; border-radius: var(--radius-md); border: none;
+  cursor: pointer; text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary-dark);
+  color: white;
+  box-shadow: 0 4px 20px rgba(59,198,164,0.28);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1.5px solid rgba(95,125,117,0.25);
+}
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+
+.spinner.visible { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 860px) {
+  nav { padding: 0 20px; }
+  .hero { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-brand">
+      <div class="logo-slot">🌿</div>
+      <span class="site-name">UpWell</span>
+    </a>
+    <div class="nav-links" id="nav-links"></div>
+  </nav>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Perfil segregado por token interno</div>
+        <h1>Perfil clinico separado da conta de email</h1>
+        <p>Os dados pessoais e clinicos sao guardados noutra base de dados. A ligacao entre autenticacao e perfil e feita apenas por um token interno do servidor, nunca pelo email.</p>
+      </div>
+
+      <aside class="aside">
+        <h2>O que fica aqui</h2>
+        <ul>
+          <li>Idade, peso e altura para contextualizar as recomendacoes.</li>
+          <li>Alergias, condicoes e medicacao habitual para evitar planos perigosos.</li>
+          <li>Notas adicionais para limites que nao cabem nas escolhas rapidas.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="form-card">
+      <div class="section-title">
+        <div>
+          <h2>Dados de perfil</h2>
+          <p>Podes atualizar estes dados a qualquer momento.</p>
+        </div>
+      </div>
+
+      <div class="alert alert-error" id="alert">
+        <span>⚠</span><span class="alert-msg"></span>
+      </div>
+
+      <form class="grid" onsubmit="event.preventDefault(); saveProfile();">
+        <div class="form-group">
+          <label class="form-label" for="age">Idade</label>
+          <input class="form-input" type="number" id="age" min="0" max="120" placeholder="Ex: 34">
+          <span class="form-error" id="age-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="weightKg">Peso (kg)</label>
+          <input class="form-input" type="number" id="weightKg" min="0" step="0.1" placeholder="Ex: 68.5">
+          <span class="form-error" id="weightKg-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="heightCm">Altura (cm)</label>
+          <input class="form-input" type="number" id="heightCm" min="0" step="0.1" placeholder="Ex: 172">
+          <span class="form-error" id="heightCm-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="medications">Medicacao habitual</label>
+          <input class="form-input" type="text" id="medications" placeholder="Ex: Metformina, Lisinopril">
+          <span class="form-hint">Separado da conta de autenticacao.</span>
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label" for="allergies">Alergias e restricoes clinicas</label>
+          <textarea class="form-textarea" id="allergies" placeholder="Ex: amendoim, lactose, gluten, intolerancia a marisco"></textarea>
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label" for="medicalConditions">Condicoes de saude relevantes</label>
+          <textarea class="form-textarea" id="medicalConditions" placeholder="Ex: diabetes tipo 2, hipertensao, refluxo"></textarea>
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label" for="notes">Notas adicionais</label>
+          <textarea class="form-textarea" id="notes" placeholder="Ex: evitar jejum prolongado, prefere refeicoes simples, pratica pouco exercicio"></textarea>
+        </div>
+      </form>
+
+      <div class="privacy-box">
+        O email fica apenas na base de autenticacao. Este perfil fica numa base separada e e identificado por um token interno indisponivel para o browser. So acessos de desenvolvimento autorizados podem consultar um perfil diretamente por token, quando `DEV_ACCESS_TOKEN` estiver configurado.
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="btn-save" onclick="saveProfile()">
+          <span id="btn-text">Guardar perfil</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+        <a href="gerar.html" class="btn btn-ghost">Ir para gerar plano</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    Auth.requireAuth('login.html');
+    renderNav('profile');
+
+    loadProfile();
+
+    async function loadProfile() {
+      try {
+        const { data } = await Auth.apiFetch('/profile/me');
+        if (!data.ok) {
+          showAlert('alert', data.error || 'Nao foi possivel carregar o perfil.');
+          return;
+        }
+
+        if (!data.profile) return;
+
+        document.getElementById('age').value = data.profile.age ?? '';
+        document.getElementById('weightKg').value = data.profile.weightKg ?? '';
+        document.getElementById('heightCm').value = data.profile.heightCm ?? '';
+        document.getElementById('allergies').value = data.profile.allergies || '';
+        document.getElementById('medicalConditions').value = data.profile.medicalConditions || '';
+        document.getElementById('medications').value = data.profile.medications || '';
+        document.getElementById('notes').value = data.profile.notes || '';
+        Auth.updateSession({ hasProfile: Boolean(data.hasProfile) });
+      } catch {
+        showAlert('alert', 'Servidor inacessivel. Confirma que o servidor esta a correr.');
+      }
+    }
+
+    async function saveProfile() {
+      ['age', 'weightKg', 'heightCm'].forEach(clearError);
+      hideAlert('alert');
+
+      const payload = {
+        age: document.getElementById('age').value.trim(),
+        weightKg: document.getElementById('weightKg').value.trim(),
+        heightCm: document.getElementById('heightCm').value.trim(),
+        allergies: document.getElementById('allergies').value.trim(),
+        medicalConditions: document.getElementById('medicalConditions').value.trim(),
+        medications: document.getElementById('medications').value.trim(),
+        notes: document.getElementById('notes').value.trim()
+      };
+
+      let valid = true;
+      if (payload.age && (Number(payload.age) < 0 || Number(payload.age) > 120)) {
+        showError('age', 'Idade invalida.');
+        valid = false;
+      }
+      if (payload.weightKg && Number(payload.weightKg) <= 0) {
+        showError('weightKg', 'Peso invalido.');
+        valid = false;
+      }
+      if (payload.heightCm && Number(payload.heightCm) <= 0) {
+        showError('heightCm', 'Altura invalida.');
+        valid = false;
+      }
+      if (!valid) return;
+
+      setLoading('btn-save', 'spinner', true);
+      document.getElementById('btn-text').textContent = 'A guardar...';
+
+      try {
+        const { data } = await Auth.apiFetch('/profile/me', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        setLoading('btn-save', 'spinner', false);
+        document.getElementById('btn-text').textContent = 'Guardar perfil';
+
+        if (!data.ok) {
+          showAlert('alert', data.error || 'Nao foi possivel guardar o perfil.');
+          return;
+        }
+
+        Auth.updateSession({ hasProfile: true });
+        showAlert('alert', 'Perfil guardado com sucesso.', 'success');
+      } catch {
+        setLoading('btn-save', 'spinner', false);
+        document.getElementById('btn-text').textContent = 'Guardar perfil';
+        showAlert('alert', 'Servidor inacessivel. Confirma que o servidor esta a correr.');
+      }
+    }
+  </script>
+</body>
+</html>

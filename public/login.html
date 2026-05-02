@@ -273,7 +273,7 @@ nav {
 
       <div class="privacy-note">
         <span>🔒</span>
-        <span>O teu email é guardado <strong>separadamente</strong> dos dados de uso. Os dados de saúde nunca são persistidos.</span>
+        <span>O teu email é guardado <strong>separadamente</strong> do perfil clínico. O perfil fica noutra base e é ligado apenas por token interno.</span>
       </div>
 
       <button class="btn btn-primary btn-full btn-submit" id="btn-login" onclick="handleLogin()">
@@ -295,7 +295,7 @@ nav {
 <script src="auth.js"></script>
 <script>
   renderNav('login');
-  Auth.redirectIfAuth('gerar.html');
+  Auth.redirectIfAuth('profile.html', 'gerar.html');
 
   document.getElementById('email').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
   document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
@@ -322,7 +322,7 @@ nav {
     document.getElementById('btn-text').textContent = 'Entrar';
 
     if (result.ok) {
-      window.location.href = 'gerar.html';
+      window.location.href = result.hasProfile ? 'gerar.html' : 'profile.html';
     } else {
       showAlert('alert', result.error);
     }

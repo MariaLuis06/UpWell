@@ -4,36 +4,180 @@ const cors = require('cors');
 const Database = require('better-sqlite3');
 const crypto = require('crypto');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const PASSWORD_SALT = process.env.PASSWORD_SALT || 'upwell_salt';
 
 app.use(cors());
 app.use(express.json());
 
-// Serve os ficheiros HTML/CSS/JS do frontend
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ─── BASE DE DADOS ────────────────────────────────────────────────────────
-const db = new Database('upwell.db');
+app.get(['/', '/index.html'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'Index.html'));
+});
 
-db.exec(`
+const authDb = new Database('auth.db');
+const profileDb = new Database('profiles.db');
+
+authDb.pragma('journal_mode = WAL');
+profileDb.pragma('journal_mode = WAL');
+
+authDb.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     anon_id TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
+    profile_token TEXT UNIQUE NOT NULL,
     created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    session_token TEXT UNIQUE NOT NULL,
+    created_at INTEGER NOT NULL,
+    expires_at INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token);
+`);
+
+profileDb.exec(`
+  CREATE TABLE IF NOT EXISTS profiles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    profile_token TEXT UNIQUE NOT NULL,
+    age INTEGER,
+    weight_kg REAL,
+    height_cm REAL,
+    allergies TEXT,
+    medical_conditions TEXT,
+    medications TEXT,
+    notes TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
   );
 `);
 
 function hashPassword(password) {
-  return crypto.createHash('sha256').update(password + 'upwell_salt').digest('hex');
+  return crypto.createHash('sha256').update(password + PASSWORD_SALT).digest('hex');
 }
 
-// ─── AUTH ENDPOINTS ───────────────────────────────────────────────────────
+function generateToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
 
-// Registo
+function cleanupExpiredSessions() {
+  authDb.prepare('DELETE FROM sessions WHERE expires_at <= ?').run(Date.now());
+}
+
+function issueSession(userId) {
+  cleanupExpiredSessions();
+  const sessionToken = generateToken();
+  const now = Date.now();
+  authDb
+    .prepare('INSERT INTO sessions (user_id, session_token, created_at, expires_at) VALUES (?, ?, ?, ?)')
+    .run(userId, sessionToken, now, now + SESSION_TTL_MS);
+  return sessionToken;
+}
+
+function sanitizeProfileRow(row) {
+  if (!row) return null;
+  return {
+    age: row.age,
+    weightKg: row.weight_kg,
+    heightCm: row.height_cm,
+    allergies: row.allergies || '',
+    medicalConditions: row.medical_conditions || '',
+    medications: row.medications || '',
+    notes: row.notes || '',
+    updatedAt: row.updated_at
+  };
+}
+
+function getAuthSession(req) {
+  const header = req.headers.authorization || '';
+  if (!header.startsWith('Bearer ')) return null;
+  const sessionToken = header.slice(7).trim();
+  if (!sessionToken) return null;
+
+  cleanupExpiredSessions();
+
+  return authDb.prepare(`
+    SELECT
+      s.session_token,
+      s.expires_at,
+      u.id AS user_id,
+      u.anon_id,
+      u.email,
+      u.profile_token
+    FROM sessions s
+    JOIN users u ON u.id = s.user_id
+    WHERE s.session_token = ? AND s.expires_at > ?
+  `).get(sessionToken, Date.now());
+}
+
+function requireSession(req, res, next) {
+  const session = getAuthSession(req);
+  if (!session) {
+    return res.status(401).json({ ok: false, error: 'Sessao invalida ou expirada.' });
+  }
+  req.session = session;
+  next();
+}
+
+function migrateLegacyUsers() {
+  if (!fs.existsSync(path.join(__dirname, 'upwell.db'))) return;
+
+  const legacyDb = new Database('upwell.db', { readonly: true });
+  let hasLegacyUsers = false;
+
+  try {
+    const table = legacyDb.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'").get();
+    hasLegacyUsers = Boolean(table);
+  } catch {
+    hasLegacyUsers = false;
+  }
+
+  if (!hasLegacyUsers) {
+    legacyDb.close();
+    return;
+  }
+
+  const legacyUsers = legacyDb.prepare('SELECT anon_id, email, password_hash, created_at FROM users').all();
+  const insertUser = authDb.prepare(`
+    INSERT OR IGNORE INTO users (anon_id, email, password_hash, profile_token, created_at)
+    VALUES (?, ?, ?, ?, ?)
+  `);
+
+  const tx = authDb.transaction(() => {
+    for (const user of legacyUsers) {
+      insertUser.run(
+        user.anon_id,
+        user.email,
+        user.password_hash,
+        generateToken(),
+        user.created_at
+      );
+    }
+  });
+
+  tx();
+  legacyDb.close();
+}
+
+migrateLegacyUsers();
+
+function getProfileExists(profileToken) {
+  const row = profileDb.prepare('SELECT 1 FROM profiles WHERE profile_token = ?').get(profileToken);
+  return Boolean(row);
+}
+
 app.post('/api/auth/register', (req, res) => {
   const { email, password, anonId } = req.body;
 
@@ -46,18 +190,20 @@ app.post('/api/auth/register', (req, res) => {
 
   try {
     const passwordHash = hashPassword(password);
-    const stmt = db.prepare('INSERT INTO users (anon_id, email, password_hash, created_at) VALUES (?, ?, ?, ?)');
-    stmt.run(anonId, email.toLowerCase(), passwordHash, Date.now());
-    res.json({ ok: true, anonId });
+    authDb.prepare(`
+      INSERT INTO users (anon_id, email, password_hash, profile_token, created_at)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(anonId, email.toLowerCase(), passwordHash, generateToken(), Date.now());
+
+    res.json({ ok: true });
   } catch (err) {
     if (err.message.includes('UNIQUE')) {
-      return res.status(409).json({ ok: false, error: 'Este email já está registado.' });
+      return res.status(409).json({ ok: false, error: 'Este email ja esta registado.' });
     }
     res.status(500).json({ ok: false, error: 'Erro no servidor.' });
   }
 });
 
-// Login
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -65,9 +211,9 @@ app.post('/api/auth/login', (req, res) => {
     return res.status(400).json({ ok: false, error: 'Campos em falta.' });
   }
 
-  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase());
+  const user = authDb.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase());
   if (!user) {
-    return res.status(401).json({ ok: false, error: 'Email não encontrado.' });
+    return res.status(401).json({ ok: false, error: 'Email nao encontrado.' });
   }
 
   const passwordHash = hashPassword(password);
@@ -75,48 +221,153 @@ app.post('/api/auth/login', (req, res) => {
     return res.status(401).json({ ok: false, error: 'Password incorreta.' });
   }
 
-  res.json({ ok: true, anonId: user.anon_id, email: user.email });
+  const sessionToken = issueSession(user.id);
+  const hasProfile = getProfileExists(user.profile_token);
+
+  res.json({
+    ok: true,
+    email: user.email,
+    anonId: user.anon_id,
+    authToken: sessionToken,
+    hasProfile
+  });
 });
 
-// ─── GROQ PROXY ──────────────────────────────────────────────────────
+app.post('/api/auth/logout', requireSession, (req, res) => {
+  authDb.prepare('DELETE FROM sessions WHERE session_token = ?').run(req.session.session_token);
+  res.json({ ok: true });
+});
 
-app.post('/api/gerar', async (req, res) => {
+app.get('/api/profile/me', requireSession, (req, res) => {
+  const row = profileDb.prepare('SELECT * FROM profiles WHERE profile_token = ?').get(req.session.profile_token);
+  res.json({ ok: true, profile: sanitizeProfileRow(row), hasProfile: Boolean(row) });
+});
+
+app.post('/api/profile/me', requireSession, (req, res) => {
+  const {
+    age,
+    weightKg,
+    heightCm,
+    allergies,
+    medicalConditions,
+    medications,
+    notes
+  } = req.body;
+
+  const parsedAge = age === '' || age == null ? null : Number.parseInt(age, 10);
+  const parsedWeight = weightKg === '' || weightKg == null ? null : Number.parseFloat(weightKg);
+  const parsedHeight = heightCm === '' || heightCm == null ? null : Number.parseFloat(heightCm);
+
+  if (parsedAge !== null && (!Number.isInteger(parsedAge) || parsedAge < 0 || parsedAge > 120)) {
+    return res.status(400).json({ ok: false, error: 'Idade invalida.' });
+  }
+  if (parsedWeight !== null && (!Number.isFinite(parsedWeight) || parsedWeight <= 0 || parsedWeight > 500)) {
+    return res.status(400).json({ ok: false, error: 'Peso invalido.' });
+  }
+  if (parsedHeight !== null && (!Number.isFinite(parsedHeight) || parsedHeight <= 0 || parsedHeight > 300)) {
+    return res.status(400).json({ ok: false, error: 'Altura invalida.' });
+  }
+
+  const now = Date.now();
+  profileDb.prepare(`
+    INSERT INTO profiles (
+      profile_token, age, weight_kg, height_cm, allergies, medical_conditions, medications, notes, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(profile_token) DO UPDATE SET
+      age = excluded.age,
+      weight_kg = excluded.weight_kg,
+      height_cm = excluded.height_cm,
+      allergies = excluded.allergies,
+      medical_conditions = excluded.medical_conditions,
+      medications = excluded.medications,
+      notes = excluded.notes,
+      updated_at = excluded.updated_at
+  `).run(
+    req.session.profile_token,
+    parsedAge,
+    parsedWeight,
+    parsedHeight,
+    (allergies || '').trim(),
+    (medicalConditions || '').trim(),
+    (medications || '').trim(),
+    (notes || '').trim(),
+    now,
+    now
+  );
+
+  res.json({ ok: true, hasProfile: true });
+});
+
+app.get('/api/dev/profile/:profileToken', (req, res) => {
+  const devToken = req.headers['x-dev-token'];
+  if (!process.env.DEV_ACCESS_TOKEN) {
+    return res.status(503).json({ ok: false, error: 'DEV_ACCESS_TOKEN nao configurado.' });
+  }
+  if (devToken !== process.env.DEV_ACCESS_TOKEN) {
+    return res.status(403).json({ ok: false, error: 'Acesso negado.' });
+  }
+
+  const user = authDb.prepare('SELECT anon_id, created_at FROM users WHERE profile_token = ?').get(req.params.profileToken);
+  const profile = profileDb.prepare('SELECT * FROM profiles WHERE profile_token = ?').get(req.params.profileToken);
+
+  if (!user && !profile) {
+    return res.status(404).json({ ok: false, error: 'Token nao encontrado.' });
+  }
+
+  res.json({
+    ok: true,
+    auth: user || null,
+    profile: sanitizeProfileRow(profile)
+  });
+});
+
+app.post('/api/gerar', requireSession, async (req, res) => {
   const { doenca, medicamento, sideEffects, restricoes } = req.body;
 
-  if (!doenca || !medicamento || !sideEffects) {
+  if (!doenca || !Array.isArray(sideEffects) || sideEffects.length === 0) {
     return res.status(400).json({ ok: false, error: 'Dados em falta.' });
   }
 
-  // Nota: os dados de saúde chegam aqui mas NUNCA são guardados na base de dados
-  // São usados apenas para chamar a API e descartados
+  const profile = profileDb.prepare('SELECT * FROM profiles WHERE profile_token = ?').get(req.session.profile_token);
+  const profileContext = sanitizeProfileRow(profile);
+  const profileSummary = profileContext ? [
+    profileContext.age ? `Idade: ${profileContext.age}` : null,
+    profileContext.weightKg ? `Peso: ${profileContext.weightKg} kg` : null,
+    profileContext.heightCm ? `Altura: ${profileContext.heightCm} cm` : null,
+    profileContext.allergies ? `Alergias/restricoes clinicas: ${profileContext.allergies}` : null,
+    profileContext.medicalConditions ? `Outras condicoes relevantes: ${profileContext.medicalConditions}` : null,
+    profileContext.medications ? `Medicacao habitual no perfil: ${profileContext.medications}` : null,
+    profileContext.notes ? `Notas adicionais do perfil: ${profileContext.notes}` : null
+  ].filter(Boolean).join('\n') : '';
 
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         max_tokens: 1500,
         messages: [{
           role: 'user',
-          content: `Sou um utilizador com ${doenca} e tomo ${medicamento}.
-Os efeitos secundários conhecidos deste medicamento são: ${sideEffects.join(', ')}.${restricoes ? `\nAlimentos que NÃO devo incluir no plano: ${restricoes}.` : ''}
+          content: `Sou um utilizador com ${doenca} e tomo ${medicamento || 'medicacao nao especificada'}.
+Os efeitos secundarios conhecidos deste medicamento sao: ${sideEffects.join(', ')}.${restricoes ? `\nAlimentos que NAO devo incluir no plano: ${restricoes}.` : ''}${profileSummary ? `\n\nPerfil clinico relevante:\n${profileSummary}` : ''}
 
-Cria um plano alimentar semanal completo (7 dias) em português europeu que:
-1. Contrabalance cada efeito secundário listado com escolhas alimentares específicas
-2. Seja prático e com alimentos acessíveis em Portugal
-3. Inclua pequeno-almoço, almoço e jantar para cada dia
-4. Explique brevemente (1 linha) porque cada refeição ajuda
+Cria um plano alimentar semanal completo (7 dias) em portugues europeu que:
+1. Contrabalance cada efeito secundario listado com escolhas alimentares especificas
+2. Seja pratico e com alimentos acessiveis em Portugal
+3. Inclua pequeno-almoco, almoco e jantar para cada dia
+4. Explique brevemente (1 linha) porque cada refeicao ajuda
+5. Respeite o perfil clinico, alergias e restricoes indicadas
 
 Formato da resposta:
-- Um parágrafo introdutório curto (2-3 frases)
-- Depois cada dia: "**Segunda-feira**" seguido das 3 refeições
+- Um paragrafo introdutorio curto (2-3 frases)
+- Depois cada dia: "**Segunda-feira**" seguido das 3 refeicoes
 - No final, 3 dicas gerais de bem-estar para este medicamento
 
-Sê específico, prático e encorajador.`
+Se houver informacao clinica insuficiente, nao inventes diagnosticos nem doses.`
         }]
       })
     });
@@ -128,19 +379,16 @@ Sê específico, prático e encorajador.`
       return res.status(500).json({ ok: false, error: 'Erro ao gerar plano.' });
     }
 
-    // Devolvemos só o plano — os dados de saúde não são guardados
     res.json({ ok: true, plano });
-
   } catch (err) {
     console.error('Erro GROQ:', err);
     res.status(500).json({ ok: false, error: 'Erro ao contactar a IA.' });
   }
 });
 
-// ─── START ────────────────────────────────────────────────────────────────
-
 app.listen(PORT, () => {
-  console.log(`✅ UpWell servidor a correr em http://localhost:${PORT}`);
-  console.log(`📁 Base de dados: upwell.db`);
-  console.log(`🔒 API key: ${process.env.GROQ_API_KEY ? 'carregada' : 'EM FALTA — verifica o .env'}`);
+  console.log(`UpWell servidor a correr em http://localhost:${PORT}`);
+  console.log('Bases de dados: auth.db + profiles.db');
+  console.log(`API key: ${process.env.GROQ_API_KEY ? 'carregada' : 'EM FALTA - verifica o .env'}`);
+  console.log(`Dev token: ${process.env.DEV_ACCESS_TOKEN ? 'configurado' : 'nao configurado'}`);
 });

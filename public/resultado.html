@@ -321,13 +321,13 @@ nav {
   </div>
 
   <div class="ephem-notice">
-    🔒 Os teus dados de saúde (condição e medicamento) foram usados apenas para gerar este plano e não foram guardados em nenhum sistema. O plano em si também não é guardado — imprime ou copia-o se quiseres conservá-lo.
+    🔒 O plano em si não é guardado. Se tiveres perfil clínico, esses dados ficam numa base separada da autenticação e ligados apenas por token interno.
   </div>
 </div>
 
 <script src="auth.js"></script>
 <script>
-  Auth.requireAuth('login.html');
+  Auth.requireProfile('profile.html');
   renderNav('resultado');
 
   const ctx = JSON.parse(sessionStorage.getItem('plan_context') || '{}');

@@ -1,9 +1,6 @@
-// ─── UPWELL AUTH — liga ao servidor local ─────────────────────────────────
-
 const API = 'http://localhost:3000/api';
 
 const Auth = (() => {
-
   function getAnonId() {
     let id = localStorage.getItem('anon_id');
     if (!id) {
@@ -14,67 +11,134 @@ const Auth = (() => {
   }
 
   function getSession() {
-    try { return JSON.parse(localStorage.getItem('session')); } catch { return null; }
+    try {
+      return JSON.parse(localStorage.getItem('session'));
+    } catch {
+      return null;
+    }
+  }
+
+  function setSession(session) {
+    localStorage.setItem('session', JSON.stringify(session));
+  }
+
+  async function apiFetch(path, options = {}) {
+    const session = getSession();
+    const headers = { ...(options.headers || {}) };
+
+    if (session?.authToken) {
+      headers.Authorization = `Bearer ${session.authToken}`;
+    }
+
+    const response = await fetch(`${API}${path}`, { ...options, headers });
+    let data = {};
+    try {
+      data = await response.json();
+    } catch {
+      data = {};
+    }
+
+    if (response.status === 401) {
+      localStorage.removeItem('session');
+    }
+
+    return { response, data };
   }
 
   async function register(email, password) {
     const anonId = getAnonId();
     try {
-      const res = await fetch(`${API}/auth/register`, {
+      const { data } = await apiFetch('/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, anonId })
       });
-      const data = await res.json();
-      if (data.ok) {
-        const session = { email, anonId, loginAt: Date.now() };
-        localStorage.setItem('session', JSON.stringify(session));
-      }
       return data;
     } catch {
-      return { ok: false, error: 'Servidor inacessível. Confirma que o servidor está a correr.' };
+      return { ok: false, error: 'Servidor inacessivel. Confirma que o servidor esta a correr.' };
     }
   }
 
   async function login(email, password) {
     try {
-      const res = await fetch(`${API}/auth/login`, {
+      const { data } = await apiFetch('/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      const data = await res.json();
+
       if (data.ok) {
-        const session = { email: data.email, anonId: data.anonId, loginAt: Date.now() };
-        localStorage.setItem('session', JSON.stringify(session));
+        const session = {
+          email: data.email,
+          anonId: data.anonId,
+          authToken: data.authToken,
+          hasProfile: Boolean(data.hasProfile),
+          loginAt: Date.now()
+        };
+        setSession(session);
         localStorage.setItem('anon_id', data.anonId);
       }
+
       return data;
     } catch {
-      return { ok: false, error: 'Servidor inacessível. Confirma que o servidor está a correr.' };
+      return { ok: false, error: 'Servidor inacessivel. Confirma que o servidor esta a correr.' };
     }
   }
 
-  function logout() {
+  async function logout() {
+    try {
+      await apiFetch('/auth/logout', { method: 'POST' });
+    } catch {
+      // Ignore logout network failures and clear local session anyway.
+    }
     localStorage.removeItem('session');
     window.location.href = 'index.html';
   }
 
   function requireAuth(redirectTo = 'login.html') {
     const session = getSession();
-    if (!session) { window.location.href = redirectTo; return null; }
+    if (!session?.authToken) {
+      window.location.href = redirectTo;
+      return null;
+    }
     return session;
   }
 
-  function redirectIfAuth(redirectTo = 'gerar.html') {
-    const session = getSession();
-    if (session) { window.location.href = redirectTo; }
+  function requireProfile(redirectTo = 'profile.html') {
+    const session = requireAuth();
+    if (!session) return null;
+    if (!session.hasProfile) {
+      window.location.href = redirectTo;
+      return null;
+    }
+    return session;
   }
 
-  return { getAnonId, getSession, register, login, logout, requireAuth, redirectIfAuth };
-})();
+  function redirectIfAuth(profilePage = 'profile.html', appPage = 'gerar.html') {
+    const session = getSession();
+    if (!session?.authToken) return;
+    window.location.href = session.hasProfile ? appPage : profilePage;
+  }
 
-// ─── NAV ──────────────────────────────────────────────────────────────────
+  function updateSession(patch) {
+    const session = getSession();
+    if (!session) return;
+    setSession({ ...session, ...patch });
+  }
+
+  return {
+    apiFetch,
+    getAnonId,
+    getSession,
+    login,
+    logout,
+    redirectIfAuth,
+    register,
+    requireAuth,
+    requireProfile,
+    updateSession
+  };
+})();
 
 function renderNav(activePage = '') {
   const session = Auth.getSession();
@@ -83,6 +147,7 @@ function renderNav(activePage = '') {
 
   if (session) {
     navLinks.innerHTML = `
+      <a href="profile.html" class="nav-link ${activePage === 'profile' ? 'active' : ''}">Perfil</a>
       <a href="gerar.html" class="nav-link ${activePage === 'gerar' ? 'active' : ''}">Gerar plano</a>
       <span class="nav-link" style="color:var(--text-secondary);cursor:default;font-size:13px">${session.email}</span>
       <button class="btn-nav-ghost" onclick="Auth.logout()">Sair</button>
@@ -95,12 +160,13 @@ function renderNav(activePage = '') {
   }
 }
 
-// ─── FORM HELPERS ─────────────────────────────────────────────────────────
-
 function showError(fieldId, msg) {
   const el = document.getElementById(fieldId + '-error');
   const input = document.getElementById(fieldId);
-  if (el) { el.textContent = msg; el.classList.add('visible'); }
+  if (el) {
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
   if (input) input.classList.add('input-error');
 }
 

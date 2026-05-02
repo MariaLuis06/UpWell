@@ -146,7 +146,7 @@
 
     <div class="privacy-ephemeral">
       <span>🔒</span>
-      <span><strong>Dados efémeros por design:</strong> a tua condição é usada apenas nesta sessão para gerar o plano. Nunca é guardada em nenhum sistema.</span>
+      <span><strong>Separação por design:</strong> o teu perfil clínico pode estar guardado noutra base de dados, mas o plano gerado continua a ser efémero e não é persistido.</span>
     </div>
 
     <div class="alert alert-error" id="alert-gen" style="display:none">
@@ -163,8 +163,9 @@
 
 <script src="auth.js"></script>
 <script>
-  Auth.requireAuth('login.html');
+  Auth.requireProfile('profile.html');
   renderNav('gerar');
+  hydrateFromProfile();
 
   const ICONS = { "Alimentação": "🥗", "Atividade Física": "🏃", "Cuidados": "❤️" };
 
@@ -295,16 +296,14 @@
 
     setLoading('btn-gerar', 'spinner', true);
     document.getElementById('btn-text').textContent = 'A gerar o plano…';
-    sessionStorage.setItem('plan_context', JSON.stringify({ doenca, cats, medicamentos }));
+    sessionStorage.setItem('plan_context', JSON.stringify({ doenca, cats, med: medicamentos }));
 
     try {
-      const res = await fetch('http://localhost:3000/api/gerar', {
+      const { data } = await Auth.apiFetch('/gerar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ doenca, medicamento: medicamentos || null, sideEffects: recomendacoes, restricoes })
       });
-
-      const data = await res.json();
 
       if (data.plano) {
         sessionStorage.setItem('plano_gerado', data.plano);
@@ -318,6 +317,35 @@
       setLoading('btn-gerar', 'spinner', false);
       document.getElementById('btn-text').textContent = 'Gerar o meu plano';
       showAlert('alert-gen', 'Servidor inacessível. Confirma que o servidor está a correr.');
+    }
+  }
+
+  async function hydrateFromProfile() {
+    try {
+      const { data } = await Auth.apiFetch('/profile/me');
+      if (!data?.profile) return;
+
+      const profile = data.profile;
+      const medsInput = document.getElementById('medicamentos');
+      const restricoesInput = document.getElementById('restricoes');
+
+      if (!medsInput.value && profile.medications) {
+        medsInput.value = profile.medications;
+      }
+      if (!restricoesInput.value && profile.allergies) {
+        restricoesInput.value = profile.allergies;
+      }
+
+      if (profile.medicalConditions && !doencaEl.value) {
+        const normalized = profile.medicalConditions.toLowerCase();
+        const match = Object.keys(DATA).find(item => normalized.includes(item.toLowerCase()));
+        if (match) {
+          doencaEl.value = match;
+          onDoencaChange();
+        }
+      }
+    } catch {
+      // Ignore profile hydration failures here; the page can still be used manually.
     }
   }
 
