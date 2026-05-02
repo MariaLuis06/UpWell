@@ -157,37 +157,65 @@
     document.getElementById('se-bar-wrap').style.display = 'none';
   }
 
-function renderPlan(text) {
-  return text
-    // remove numeração tipo "1. "
-    .replace(/^\d+\.\s*/gm, '')
+  function renderPlan(text) {
+    const TITULO_KEYWORDS = [
+      'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado', 'sabado', 'domingo',
+      'dicas', 'bem-estar'
+    ];
 
-    // remove "• " do texto original (para não duplicar com CSS)
-    .replace(/^•\s*/gm, '')
+    return text
+      .replace(/^\d+\.\s*/gm, '')
+      .replace(/^•\s*/gm, '')
+      // 👇 garante que **Dia** fica sempre no seu próprio bloco
+      .replace(/^(\*\*[^*]+\*\*)$/gm, '\n$1\n')
+      .split('\n\n')
+      .map(block => {
+        block = block.trim();
+        if (!block) return '';
 
-    // corrige "Título : descrição" → mantém inline (não como bloco)
-    .replace(/\*\*(.*?)\*\*\s*:\s*/g, '<strong>$1</strong> ')
+        // **texto** sozinho → título ou subtítulo
+        if (/^\*\*(.*?)\*\*$/.test(block)) {
+          const title = block.replace(/\*\*/g, '');
+          const lower = title.toLowerCase();
 
-    // transforma listas
-    .replace(/^- (.+)$/gm, '<li>$1</li>')
+          if (TITULO_KEYWORDS.some(k => lower.includes(k))) {
+            return `<h3 style="
+              font-family:'Poppins',sans-serif;
+              font-size:17px;
+              font-weight:700;
+              color:var(--text-primary);
+              margin:28px 0 10px;
+              padding-bottom:6px;
+              border-bottom:2px solid rgba(111,227,193,0.35);
+            ">${title}</h3>`;
+          }
 
-    // organiza por blocos
-    .split('\n\n')
-    .map(block => {
-      // se tiver items → lista
-      if (block.includes('<li>')) {
-        return '<ul>' + block + '</ul>';
-      }
+          return `<h4 style="
+            font-family:'Poppins',sans-serif;
+            font-size:14px;
+            font-weight:600;
+            color:var(--primary-dark);
+            margin:18px 0 4px;
+          ">${title}</h4>`;
+        }
 
-      // se for linha tipo "Dica: texto" → manter como parágrafo inline
-      if (block.includes('<strong>')) {
-        return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
-      }
+        // Refeições → bullets verdes
+        if (/Pequeno-almoço:|Almoço:|Jantar:/i.test(block)) {
+          const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+          return '<ul>' + lines.map(l => `<li>${l}</li>`).join('') + '</ul>';
+        }
 
-      // parágrafo normal
-      return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
-    })
-    .join('');
+        // Lista com "- "
+        if (/^- /m.test(block)) {
+          return '<ul>' + block.replace(/^- (.+)$/gm, '<li>$1</li>') + '</ul>';
+        }
+
+        // Parágrafo normal
+        return '<p>' + block
+          .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+          .replace(/\n/g, '<br>') + '</p>';
+      })
+      .join('');
   }
 
   document.getElementById('plan-content').innerHTML = renderPlan(plano);
