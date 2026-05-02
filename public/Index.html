@@ -392,7 +392,7 @@ nav {
 <div class="stats-strip">
   <div class="stats-inner">
     <div class="stat"><div class="stat-n">8+</div><div class="stat-l">Doenças suportadas</div></div>
-    <div class="stat"><div class="stat-n">20+</div><div class="stat-l">Medicamentos</div></div>
+    <div class="stat"><div class="stat-n">15+</div><div class="stat-l">Medicamentos</div></div>
     <div class="stat"><div class="stat-n">7</div><div class="stat-l">Dias de plano gerado</div></div>
     <div class="stat"><div class="stat-n">0</div><div class="stat-l">Dados de saúde guardados</div></div>
   </div>
@@ -484,24 +484,24 @@ nav {
     <p class="footer-team-title">A equipa</p>
     <div class="team-grid">
       <div class="team-card">
-        <p class="team-name">Nome do membro</p>
-        <p class="team-role">Função na equipa</p>
-        <a href="mailto:email@exemplo.com" class="team-email">email@exemplo.com</a>
+        <p class="team-name">Francisco Mendes</p>
+        <p class="team-role">Researcher</p>
+        <a href="mailto:email@exemplo.com" class="team-email">franmendes.161007@gmail.com</a>
       </div>
       <div class="team-card">
-        <p class="team-name">Nome do membro</p>
-        <p class="team-role">Função na equipa</p>
-        <a href="mailto:email@exemplo.com" class="team-email">email@exemplo.com</a>
+        <p class="team-name">Maria Luís Silva</p>
+        <p class="team-role">Developer</p>
+        <a href="mailto:email@exemplo.com" class="team-email">miluisrs@gmail.com</a>
       </div>
       <div class="team-card">
-        <p class="team-name">Nome do membro</p>
-        <p class="team-role">Função na equipa</p>
-        <a href="mailto:email@exemplo.com" class="team-email">email@exemplo.com</a>
+        <p class="team-name">Martim Brito</p>
+        <p class="team-role">Designer</p>
+        <a href="mailto:email@exemplo.com" class="team-email">martimbrito07@gmail.com</a>
       </div>
       <div class="team-card">
-        <p class="team-name">Nome do membro</p>
-        <p class="team-role">Função na equipa</p>
-        <a href="mailto:email@exemplo.com" class="team-email">email@exemplo.com</a>
+        <p class="team-name">Martim Silva</p>
+        <p class="team-role">Researcher</p>
+        <a href="mailto:email@exemplo.com" class="team-email">martimpardal2007@gmail.com</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -512,6 +512,21 @@ nav {
 </footer>
 
 <script src="auth.js"></script>
-<script>renderNav('home');</script>
+<script>
+  renderNav('home');
+  const session = Auth.getSession();
+  if (session) {
+    const heroBtn = document.querySelector('.hero-actions a[href="register.html"]');
+    if (heroBtn) {
+      heroBtn.textContent = 'Gerar plano';
+      heroBtn.href = 'gerar.html';
+    }
+    const ctaBtn = document.querySelector('.cta-box a[href="register.html"]');
+    if (ctaBtn) {
+      ctaBtn.textContent = 'Ir para o meu plano';
+      ctaBtn.href = 'gerar.html';
+    }
+  }
+</script>
 </body>
 </html>
