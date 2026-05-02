@@ -160,14 +160,20 @@
   function renderPlan(text) {
     const TITULO_KEYWORDS = [
       'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado', 'sabado', 'domingo',
-      'dicas', 'bem-estar'
+      'dicas', 'gerais', 'bem-estar'
     ];
 
     return text
       .replace(/^\d+\.\s*/gm, '')
       .replace(/^•\s*/gm, '')
-      // 👇 garante que **Dia** fica sempre no seu próprio bloco
       .replace(/^(\*\*[^*]+\*\*)$/gm, '\n$1\n')
+      .replace(/^([^\n*]{3,60}:)\s*$/gm, (match, p1) => {
+        const lower = p1.toLowerCase();
+        if (TITULO_KEYWORDS.some(k => lower.includes(k))) {
+          return `\n**${p1.replace(/:$/, '')}**\n`;
+        }
+        return match;
+      })
       .split('\n\n')
       .map(block => {
         block = block.trim();
