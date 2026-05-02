@@ -336,7 +336,7 @@ app.get('/api/dev/profile/:profileToken', (req, res) => {
 });
 
 app.post('/api/gerar', requireSession, async (req, res) => {
-  const { doenca, medicamento, sideEffects, restricoes } = req.body;
+  const { doenca, medicamento, sideEffects, restricoes, cats } = req.body;
 
   if (!doenca || !Array.isArray(sideEffects) || sideEffects.length === 0) {
     return res.status(400).json({ ok: false, error: 'Dados em falta.' });
@@ -367,22 +367,56 @@ app.post('/api/gerar', requireSession, async (req, res) => {
         max_tokens: 1500,
         messages: [{
           role: 'user',
-          content: `Sou um utilizador com ${doenca} e tomo ${medicamento || 'medicacao nao especificada'}.
-Os efeitos secundarios conhecidos deste medicamento sao: ${sideEffects.join(', ')}.${restricoes ? `\nAlimentos que NAO devo incluir no plano: ${restricoes}.` : ''}${profileSummary ? `\n\nPerfil clinico relevante:\n${profileSummary}` : ''}
+          content: (() => {
+            const hasAlim = Array.isArray(cats) && cats.includes('Alimentação');
+            const hasExerc = Array.isArray(cats) && cats.includes('Atividade Física');
+            const ambos = hasAlim && hasExerc;
+            const soExerc = hasExerc && !hasAlim;
 
-Cria um plano alimentar semanal completo (7 dias) em portugues europeu que:
-1. Contrabalance cada efeito secundario listado com escolhas alimentares especificas
-2. Seja pratico e com alimentos acessiveis em Portugal
-3. Inclua pequeno-almoco, almoco e jantar para cada dia
-4. Explique brevemente (1 linha) porque cada refeicao ajuda
-5. Respeite o perfil clinico, alergias e restricoes indicadas
+            const base = `Sou um utilizador com ${doenca}.${medicamento ? `\nTomo: ${medicamento}.` : ''}${sideEffects.length ? `\nEfeitos secundários relevantes: ${sideEffects.join(', ')}.` : ''}${restricoes ? `\nAlimentos a EVITAR: ${restricoes}.` : ''}${profileSummary ? `\n\nPerfil clínico:\n${profileSummary}` : ''}`;
 
-Formato da resposta:
-- Um paragrafo introdutorio curto (2-3 frases)
-- Depois cada dia: "**Segunda-feira**" seguido das 3 refeicoes
-- No final, 3 dicas gerais de bem-estar para este medicamento
+            if (ambos) {
+              return `${base}
 
-Se houver informacao clinica insuficiente, nao inventes diagnosticos nem doses.`
+Cria um plano semanal completo (7 dias) em português europeu com alimentação E exercício físico integrados.
+Para cada dia usa EXATAMENTE este formato:
+
+**Segunda-feira**
+🥗 Alimentação:
+• Pequeno-almoço: [sugestão]
+• Almoço: [sugestão]
+• Jantar: [sugestão]
+🏃 Exercício:
+• [atividade] — [duração] — [benefício numa frase]
+
+Repete para todos os 7 dias. No final, 3 dicas gerais de bem-estar. Usa alimentos acessíveis em Portugal. Sê específico e encorajador.`;
+            } else if (soExerc) {
+              return `${base}
+
+Cria um plano de exercício físico semanal completo (7 dias) em português europeu.
+Para cada dia usa EXATAMENTE este formato:
+
+**Segunda-feira**
+🏃 Exercício: [nome do exercício]
+⏱ Duração: [tempo]
+💪 Intensidade: [leve/moderada/intensa]
+✅ Benefício: [1 frase explicando porque ajuda esta condição]
+
+Repete para todos os 7 dias. No final, 3 dicas gerais de bem-estar físico. Sê específico e motivador.`;
+            } else {
+              return `${base}
+
+Cria um plano alimentar semanal completo (7 dias) em português europeu.
+Para cada dia usa EXATAMENTE este formato:
+
+**Segunda-feira**
+• Pequeno-almoço: [sugestão + 1 frase de benefício]
+• Almoço: [sugestão + 1 frase de benefício]
+• Jantar: [sugestão + 1 frase de benefício]
+
+Repete para todos os 7 dias. Usa alimentos acessíveis em Portugal. No final, 3 dicas gerais de bem-estar. Sê específico e encorajador.`;
+            }
+          })()
         }]
       })
     });

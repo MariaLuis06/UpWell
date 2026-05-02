@@ -297,7 +297,7 @@
       const { data } = await Auth.apiFetch('/gerar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ doenca, medicamento: medicamentos || null, sideEffects: recomendacoes, restricoes })
+        body: JSON.stringify({doenca, medicamento: medicamentos || null, sideEffects: recomendacoes, restricoes, cats})
       });
 
       if (data.plano) {

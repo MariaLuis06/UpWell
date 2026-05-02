@@ -92,8 +92,8 @@
   <div class="plan-card" id="plan-card">
     <div class="plan-card-header">
       <div>
-        <h2>Plano alimentar semanal</h2>
-        <p>7 dias · Pequeno-almoço, almoço e jantar</p>
+        <h2 id="plan-title">Plano semanal</h2>
+        <p id="plan-subtitle">7 dias · Personalizado para ti</p>
       </div>
       <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(255,255,255,0.15)"/><path d="M12 18h12M18 12v12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
     </div>
@@ -130,6 +130,21 @@
   document.getElementById('ctx-doenca').textContent = ctx.doenca || '—';
   document.getElementById('ctx-med').textContent = ctx.med || '—';
 
+  // Set plan title based on selected categories
+  const cats = ctx.cats || [];
+  const hasAlim = cats.includes('Alimentação');
+  const hasExerc = cats.includes('Atividade Física');
+  if (hasAlim && hasExerc) {
+    document.getElementById('plan-title').textContent = 'Plano de bem-estar semanal';
+    document.getElementById('plan-subtitle').textContent = '7 dias · Alimentação e exercício físico';
+  } else if (hasExerc) {
+    document.getElementById('plan-title').textContent = 'Plano de exercício físico semanal';
+    document.getElementById('plan-subtitle').textContent = '7 dias · Atividade física personalizada';
+  } else {
+    document.getElementById('plan-title').textContent = 'Plano alimentar semanal';
+    document.getElementById('plan-subtitle').textContent = '7 dias · Pequeno-almoço, almoço e jantar';
+  }
+
   const seBar = document.getElementById('se-bar');
   if (ctx.se && ctx.se.length) {
     ctx.se.forEach(s => {
@@ -142,18 +157,37 @@
     document.getElementById('se-bar-wrap').style.display = 'none';
   }
 
-  function renderPlan(text) {
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/^• (.+)$/gm, '<li>$1</li>')
-      .replace(/^- (.+)$/gm, '<li>$1</li>')
-      .split('\n\n')
-      .map(block => {
-        if (block.includes('<li>')) return '<ul>' + block + '</ul>';
-        if (block.includes('<strong>')) return block;
+function renderPlan(text) {
+  return text
+    // remove numeração tipo "1. "
+    .replace(/^\d+\.\s*/gm, '')
+
+    // remove "• " do texto original (para não duplicar com CSS)
+    .replace(/^•\s*/gm, '')
+
+    // corrige "Título : descrição" → mantém inline (não como bloco)
+    .replace(/\*\*(.*?)\*\*\s*:\s*/g, '<strong>$1</strong> ')
+
+    // transforma listas
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+
+    // organiza por blocos
+    .split('\n\n')
+    .map(block => {
+      // se tiver items → lista
+      if (block.includes('<li>')) {
+        return '<ul>' + block + '</ul>';
+      }
+
+      // se for linha tipo "Dica: texto" → manter como parágrafo inline
+      if (block.includes('<strong>')) {
         return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
-      })
-      .join('');
+      }
+
+      // parágrafo normal
+      return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+    })
+    .join('');
   }
 
   document.getElementById('plan-content').innerHTML = renderPlan(plano);
