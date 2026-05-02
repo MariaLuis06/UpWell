@@ -304,11 +304,12 @@ nav {
     /* CTA */
     .cta-section { position: relative; z-index: 1; max-width: 1020px; margin: 80px auto; padding: 0 40px; }
     .cta-box { background: linear-gradient(135deg, var(--primary-dark) 0%, #2eaf90 100%); border-radius: var(--radius-xl); padding: 60px; text-align: center; position: relative; overflow: hidden; }
-    .cta-box::before { content: ''; position: absolute; top: -60px; right: -60px; width: 260px; height: 260px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+    .cta-box::before { content: ''; position: absolute; top: -20px; right: -20px; width: 260px; height: 260px; border-radius: 50%; background-image: url('logo.png'); background-size: contain; background-repeat: no-repeat; background-position: center; opacity: 0.45; filter: brightness(1.4); }
+    .cta-box::after { content: ''; position: absolute; bottom: -80px; left: -80px; width: 260px; height: 260px; background: rgba(255,255,255,0.08); border-radius: 50%; }
     .cta-box h2 { font-size: clamp(24px, 4vw, 38px); font-weight: 800; color: white; margin-bottom: 12px; position: relative; z-index: 1; }
     .cta-box p { font-size: 16px; color: rgba(255,255,255,0.78); margin-bottom: 28px; position: relative; z-index: 1; }
-
-    /* FOOTER */
+    .cta-circle { position: absolute; top: -80px; left: 20px; width: 260px; height: 260px; background: rgba(255,255,255,0.15); border-radius: 50%; pointer-events: none; }    
+    
     footer { background: var(--text-primary); color: white; padding: 52px 40px 32px; }
     .footer-inner { max-width: 1100px; margin: 0 auto; }
     .footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
@@ -362,7 +363,7 @@ nav {
 <section class="hero">
   <div class="hero-left">
     <div class="hero-tag">✦ Bem-estar personalizado</div>
-    <h1>A tua alimentação<br>adaptada à tua<br><span class="hl">medicação</span></h1>
+    <h1>Feito para o<br>teu corpo.<br><span class="hl">Feito para a tua vida.</span></h1>
     <p>Indica a tua condição e medicamento — geramos um plano alimentar semanal que contrabalança os efeitos secundários e melhora o teu dia a dia.</p>
     <div class="hero-actions">
       <a href="register.html" class="btn btn-primary">Criar conta grátis</a>
@@ -430,7 +431,7 @@ nav {
     <div class="privacy-left">
       <div class="section-tag" style="margin-bottom:14px">Privacy by design</div>
       <h2>A tua saúde é tua.</h2>
-      <p>Construimos o UpWell com privacidade como principio base, nao como adicao. O email fica separado do perfil clinico, e a ligacao entre ambos e feita apenas por um token interno do servidor.</p>
+      <p>Construímos o UpWell com privacidade como princípio base, não como adição. O email fica separado do perfil clínico, e a ligação entre ambos é feita apenas por um token interno do servidor.</p>
       <div class="privacy-chips">
         <span class="chip">Perfis anónimos</span>
         <span class="chip">Dados efémeros</span>
@@ -441,11 +442,11 @@ nav {
     <div class="privacy-card">
       <div class="privacy-row">
         <div class="prv-icon prv-ok">✓</div>
-        <div><div class="prv-label">Perfil anónimo (anon_id)</div><div class="prv-sub">Gerado localmente, nunca enviado</div></div>
+        <div><div class="prv-label">Perfil anónimo</div><div class="prv-sub">Gerado localmente, nunca enviado</div></div>
       </div>
       <div class="privacy-row">
         <div class="prv-icon prv-ok">✓</div>
-        <div><div class="prv-label">Preferências guardadas</div><div class="prv-sub">Indexadas pelo anon_id, sem nome</div></div>
+        <div><div class="prv-label">Preferências guardadas</div><div class="prv-sub">Indexadas pelo Perfil anónimo, sem nome</div></div>
       </div>
       <div class="privacy-row">
         <div class="prv-icon prv-ok">✓</div>
@@ -466,8 +467,9 @@ nav {
 <!-- CTA -->
 <div class="cta-section">
   <div class="cta-box">
-    <h2>Pronto para comer melhor?</h2>
-    <p>Cria uma conta gratuita e gera o teu primeiro plano em menos de 30 segundos.</p>
+    <div class="cta-circle"></div>
+    <h2>Pronto para se sentir melhor?</h2>
+    <p>Crie uma conta gratuita e gera o teu primeiro plano connosco.</p>
     <a href="register.html" class="btn btn-white">Começar agora — é grátis</a>
   </div>
 </div>
