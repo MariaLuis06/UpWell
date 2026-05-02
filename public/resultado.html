@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O teu plano — UpWell</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary:       #6FE3C1;
+  --primary-dark:  #3BC6A4;
+  --accent:        #A8F0DC;
+  --bg:            #F4FFFB;
+  --surface:       #FFFFFF;
+  --text-primary:  #1F2D2A;
+  --text-secondary:#5F7D75;
+  --error:         #E53E3E;
+  --radius-sm:     8px;
+  --radius-md:     14px;
+  --radius-lg:     24px;
+  --radius-xl:     36px;
+  --shadow-sm:     0 2px 8px rgba(31,45,42,0.06);
+  --shadow-md:     0 8px 32px rgba(31,45,42,0.08);
+  --shadow-lg:     0 20px 60px rgba(31,45,42,0.1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 { font-family: 'Poppins', sans-serif; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(244,255,251,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(111,227,193,0.2);
+  padding: 0 40px; height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-slot {
+  width: 38px; height: 38px; border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.site-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: var(--text-primary); }
+.nav-links { display: flex; align-items: center; gap: 6px; }
+.nav-link {
+  font-size: 14px; font-weight: 500; color: var(--text-secondary);
+  text-decoration: none; padding: 8px 14px; border-radius: var(--radius-sm);
+  transition: color .2s, background .2s;
+}
+.nav-link:hover { color: var(--text-primary); background: rgba(111,227,193,0.12); }
+.nav-link.active { color: var(--primary-dark); font-weight: 600; }
+.btn-nav {
+  background: var(--primary-dark); color: white;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px;
+  padding: 9px 20px; border-radius: var(--radius-sm); border: none;
+  cursor: pointer; transition: background .2s, transform .15s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-nav:hover { background: #2eaf90; transform: translateY(-1px); }
+.btn-nav-ghost {
+  background: transparent; color: var(--text-secondary);
+  font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(95,125,117,0.22); cursor: pointer;
+  transition: border-color .2s, color .2s; text-decoration: none;
+  display: inline-flex; align-items: center;
+}
+.btn-nav-ghost:hover { border-color: var(--primary); color: var(--text-primary); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px;
+  padding: 13px 28px; border-radius: var(--radius-md); border: none;
+  cursor: pointer; transition: all .2s; text-decoration: none; white-space: nowrap;
+}
+.btn-primary {
+  background: var(--primary-dark); color: white;
+  box-shadow: 0 4px 20px rgba(59,198,164,0.28);
+}
+.btn-primary:hover { background: #2eaf90; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(59,198,164,0.38); }
+.btn-primary:disabled { background: #a8d5c9; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-ghost {
+  background: transparent; color: var(--text-secondary);
+  border: 1.5px solid rgba(95,125,117,0.25);
+}
+.btn-ghost:hover { border-color: var(--primary); color: var(--text-primary); background: rgba(111,227,193,0.06); }
+.btn-white { background: white; color: var(--primary-dark); }
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.btn-full { width: 100%; }
+.btn-sm { padding: 9px 18px; font-size: 14px; }
+
+/* ── FORM ELEMENTS ── */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-size: 13px; font-weight: 600; color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+.form-input, .form-select {
+  width: 100%; padding: 13px 16px;
+  border: 1.5px solid rgba(95,125,117,0.22);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif; font-size: 15px;
+  color: var(--text-primary); background: var(--surface);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none; appearance: none;
+}
+.form-input:focus, .form-select:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(111,227,193,0.2);
+}
+.form-input::placeholder { color: #9ab8b0; }
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235F7D75' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px; cursor: pointer;
+}
+.form-hint { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.form-error { font-size: 12px; color: var(--error); margin-top: 2px; display: none; }
+.form-error.visible { display: block; }
+.input-error { border-color: var(--error) !important; }
+
+/* ── ALERTS ── */
+.alert {
+  padding: 12px 16px; border-radius: var(--radius-md);
+  font-size: 14px; display: flex; align-items: flex-start; gap: 10px;
+  display: none;
+}
+.alert.visible { display: flex; }
+.alert-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+.alert-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+.alert-info { background: rgba(111,227,193,0.1); color: var(--primary-dark); border: 1px solid rgba(111,227,193,0.3); }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface); border-radius: var(--radius-lg);
+  border: 1px solid rgba(111,227,193,0.18); box-shadow: var(--shadow-md);
+}
+
+/* ── DIVIDER ── */
+.divider { display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: 13px; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(95,125,117,0.18); }
+
+/* ── BADGE ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(111,227,193,0.12); border: 1px solid rgba(111,227,193,0.3);
+  border-radius: 100px; padding: 4px 12px;
+  font-size: 12px; font-weight: 600; color: var(--primary-dark);
+}
+
+/* ── LOADING SPINNER ── */
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+.spinner.visible { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── FOOTER MINI ── */
+.footer-mini {
+  background: var(--text-primary); color: rgba(255,255,255,0.4);
+  text-align: center; font-size: 12px; padding: 20px;
+}
+.footer-mini a { color: var(--primary); text-decoration: none; }
+
+/* ── PRIVACY BADGE ── */
+.privacy-note {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(111,227,193,0.08); border: 1px solid rgba(111,227,193,0.2);
+  border-radius: var(--radius-md); padding: 10px 14px;
+  font-size: 12px; color: var(--text-secondary);
+}
+.privacy-note strong { color: var(--primary-dark); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links .nav-link { display: none; }
+}
+
+</style>
+  <style>
+    .page-wrap { max-width: 760px; margin: 0 auto; padding: 52px 24px 80px; }
+
+    .result-header { text-align: center; margin-bottom: 36px; }
+    .result-header .badge { margin-bottom: 14px; }
+    .result-header h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+    .result-header p { font-size: 14px; color: var(--text-secondary); }
+
+    /* Context pill */
+    .context-bar {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .ctx-pill {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--surface); border: 1px solid rgba(111,227,193,0.25);
+      border-radius: 100px; padding: 7px 16px; font-size: 13px; font-weight: 500;
+      color: var(--text-primary); box-shadow: var(--shadow-sm);
+    }
+    .ctx-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary-dark); }
+    .ctx-sep { color: var(--text-secondary); font-size: 12px; }
+
+    /* Plan card */
+    .plan-card {
+      background: var(--surface); border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md); border: 1px solid rgba(111,227,193,0.18);
+      overflow: hidden; margin-bottom: 24px;
+    }
+    .plan-card-header {
+      background: linear-gradient(135deg, var(--primary-dark), #2eaf90);
+      padding: 24px 32px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .plan-card-header h2 { font-size: 18px; font-weight: 700; color: white; }
+    .plan-card-header p { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 3px; }
+    .plan-card-body { padding: 32px; }
+
+    /* Markdown-like rendering */
+    #plan-content { font-size: 15px; line-height: 1.8; color: var(--text-primary); }
+    #plan-content p { margin-bottom: 14px; }
+    #plan-content strong { font-weight: 700; color: var(--text-primary); font-family: 'Poppins', sans-serif; font-size: 16px; display: block; margin: 20px 0 8px; padding-bottom: 6px; border-bottom: 2px solid rgba(111,227,193,0.25); }
+    #plan-content strong:first-child { margin-top: 0; }
+    #plan-content ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    #plan-content li { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: var(--text-primary); }
+    #plan-content li::before { content: '•'; color: var(--primary-dark); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+    /* SE chips */
+    .se-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+    .se-chip { background: rgba(111,227,193,0.1); border: 1px solid rgba(111,227,193,0.25); border-radius: 100px; padding: 4px 13px; font-size: 12px; font-weight: 500; color: var(--primary-dark); }
+
+    /* Actions */
+    .result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Privacy note */
+    .ephem-notice {
+      background: rgba(229,62,62,0.04); border: 1px solid rgba(229,62,62,0.12);
+      border-radius: var(--radius-md); padding: 12px 16px;
+      font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;
+      margin-top: 20px;
+    }
+
+    /* Print */
+    @media print {
+      nav, .result-actions, .ephem-notice { display: none; }
+      .plan-card { box-shadow: none; border: 1px solid #ddd; }
+    }
+
+    @media (max-width: 600px) {
+      .plan-card-body { padding: 20px; }
+      .result-actions { flex-direction: column; }
+      .result-actions .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">
+    <div class="logo-slot">🌿</div>
+    <span class="site-name">UpWell</span>
+  </a>
+  <div class="nav-links" id="nav-links"></div>
+</nav>
+
+<div class="page-wrap">
+  <div class="result-header">
+    <div class="badge">✦ Plano gerado</div>
+    <h1>O teu plano está pronto</h1>
+    <p>Gerado por IA, personalizado para a tua condição e medicação</p>
+  </div>
+
+  <div class="context-bar" id="context-bar">
+    <span class="ctx-pill"><span class="ctx-dot"></span><span id="ctx-doenca">—</span></span>
+    <span class="ctx-sep">·</span>
+    <span class="ctx-pill"><span class="ctx-dot"></span><span id="ctx-med">—</span></span>
+  </div>
+
+  <div id="se-bar-wrap">
+    <div class="se-bar" id="se-bar"></div>
+  </div>
+
+  <div class="plan-card">
+    <div class="plan-card-header">
+      <div>
+        <h2>Plano alimentar semanal</h2>
+        <p>7 dias · Pequeno-almoço, almoço e jantar</p>
+      </div>
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(255,255,255,0.15)"/><path d="M12 18h12M18 12v12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div class="plan-card-body">
+      <div id="plan-content">
+        <p style="color:var(--text-secondary);font-style:italic">A carregar o teu plano…</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-actions">
+    <button class="btn btn-primary" onclick="window.print()">Imprimir plano</button>
+    <a href="gerar.html" class="btn btn-ghost">Gerar novo plano</a>
+  </div>
+
+  <div class="ephem-notice">
+    🔒 Os teus dados de saúde (condição e medicamento) foram usados apenas para gerar este plano e não foram guardados em nenhum sistema. O plano em si também não é guardado — imprime ou copia-o se quiseres conservá-lo.
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+  Auth.requireAuth('login.html');
+  renderNav('resultado');
+
+  const ctx = JSON.parse(sessionStorage.getItem('plan_context') || '{}');
+  const plano = sessionStorage.getItem('plano_gerado') || '';
+
+  if (!plano) {
+    window.location.href = 'gerar.html';
+  }
+
+  // Context bar
+  document.getElementById('ctx-doenca').textContent = ctx.doenca || '—';
+  document.getElementById('ctx-med').textContent = ctx.med || '—';
+
+  // Side effects chips
+  const seBar = document.getElementById('se-bar');
+  if (ctx.se?.length) {
+    ctx.se.forEach(s => {
+      const chip = document.createElement('span');
+      chip.className = 'se-chip'; chip.textContent = s;
+      seBar.appendChild(chip);
+    });
+  } else {
+    document.getElementById('se-bar-wrap').style.display = 'none';
+  }
+
+  // Render plan text (basic markdown)
+  function renderPlan(text) {
+    let html = text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^• (.+)$/gm, '<li>$1</li>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .split('\n\n')
+      .map(block => {
+        if (block.includes('<li>')) return '<ul>' + block + '</ul>';
+        if (block.includes('<strong>')) return block;
+        return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+      })
+      .join('');
+    return html;
+  }
+
+  document.getElementById('plan-content').innerHTML = renderPlan(plano);
+
+  // Limpa dados da sessão após renderizar (dados efémeros)
+  sessionStorage.removeItem('plan_context');
+</script>
+</body>
+</html>

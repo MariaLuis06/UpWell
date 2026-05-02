@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar — UpWell</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary:       #6FE3C1;
+  --primary-dark:  #3BC6A4;
+  --accent:        #A8F0DC;
+  --bg:            #F4FFFB;
+  --surface:       #FFFFFF;
+  --text-primary:  #1F2D2A;
+  --text-secondary:#5F7D75;
+  --error:         #E53E3E;
+  --radius-sm:     8px;
+  --radius-md:     14px;
+  --radius-lg:     24px;
+  --radius-xl:     36px;
+  --shadow-sm:     0 2px 8px rgba(31,45,42,0.06);
+  --shadow-md:     0 8px 32px rgba(31,45,42,0.08);
+  --shadow-lg:     0 20px 60px rgba(31,45,42,0.1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 { font-family: 'Poppins', sans-serif; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(244,255,251,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(111,227,193,0.2);
+  padding: 0 40px; height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-slot {
+  width: 38px; height: 38px; border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.site-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: var(--text-primary); }
+.nav-links { display: flex; align-items: center; gap: 6px; }
+.nav-link {
+  font-size: 14px; font-weight: 500; color: var(--text-secondary);
+  text-decoration: none; padding: 8px 14px; border-radius: var(--radius-sm);
+  transition: color .2s, background .2s;
+}
+.nav-link:hover { color: var(--text-primary); background: rgba(111,227,193,0.12); }
+.nav-link.active { color: var(--primary-dark); font-weight: 600; }
+.btn-nav {
+  background: var(--primary-dark); color: white;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px;
+  padding: 9px 20px; border-radius: var(--radius-sm); border: none;
+  cursor: pointer; transition: background .2s, transform .15s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-nav:hover { background: #2eaf90; transform: translateY(-1px); }
+.btn-nav-ghost {
+  background: transparent; color: var(--text-secondary);
+  font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(95,125,117,0.22); cursor: pointer;
+  transition: border-color .2s, color .2s; text-decoration: none;
+  display: inline-flex; align-items: center;
+}
+.btn-nav-ghost:hover { border-color: var(--primary); color: var(--text-primary); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px;
+  padding: 13px 28px; border-radius: var(--radius-md); border: none;
+  cursor: pointer; transition: all .2s; text-decoration: none; white-space: nowrap;
+}
+.btn-primary {
+  background: var(--primary-dark); color: white;
+  box-shadow: 0 4px 20px rgba(59,198,164,0.28);
+}
+.btn-primary:hover { background: #2eaf90; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(59,198,164,0.38); }
+.btn-primary:disabled { background: #a8d5c9; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-ghost {
+  background: transparent; color: var(--text-secondary);
+  border: 1.5px solid rgba(95,125,117,0.25);
+}
+.btn-ghost:hover { border-color: var(--primary); color: var(--text-primary); background: rgba(111,227,193,0.06); }
+.btn-white { background: white; color: var(--primary-dark); }
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.btn-full { width: 100%; }
+.btn-sm { padding: 9px 18px; font-size: 14px; }
+
+/* ── FORM ELEMENTS ── */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-size: 13px; font-weight: 600; color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+.form-input, .form-select {
+  width: 100%; padding: 13px 16px;
+  border: 1.5px solid rgba(95,125,117,0.22);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif; font-size: 15px;
+  color: var(--text-primary); background: var(--surface);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none; appearance: none;
+}
+.form-input:focus, .form-select:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(111,227,193,0.2);
+}
+.form-input::placeholder { color: #9ab8b0; }
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235F7D75' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px; cursor: pointer;
+}
+.form-hint { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.form-error { font-size: 12px; color: var(--error); margin-top: 2px; display: none; }
+.form-error.visible { display: block; }
+.input-error { border-color: var(--error) !important; }
+
+/* ── ALERTS ── */
+.alert {
+  padding: 12px 16px; border-radius: var(--radius-md);
+  font-size: 14px; display: flex; align-items: flex-start; gap: 10px;
+  display: none;
+}
+.alert.visible { display: flex; }
+.alert-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+.alert-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+.alert-info { background: rgba(111,227,193,0.1); color: var(--primary-dark); border: 1px solid rgba(111,227,193,0.3); }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface); border-radius: var(--radius-lg);
+  border: 1px solid rgba(111,227,193,0.18); box-shadow: var(--shadow-md);
+}
+
+/* ── DIVIDER ── */
+.divider { display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: 13px; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(95,125,117,0.18); }
+
+/* ── BADGE ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(111,227,193,0.12); border: 1px solid rgba(111,227,193,0.3);
+  border-radius: 100px; padding: 4px 12px;
+  font-size: 12px; font-weight: 600; color: var(--primary-dark);
+}
+
+/* ── LOADING SPINNER ── */
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+.spinner.visible { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── FOOTER MINI ── */
+.footer-mini {
+  background: var(--text-primary); color: rgba(255,255,255,0.4);
+  text-align: center; font-size: 12px; padding: 20px;
+}
+.footer-mini a { color: var(--primary); text-decoration: none; }
+
+/* ── PRIVACY BADGE ── */
+.privacy-note {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(111,227,193,0.08); border: 1px solid rgba(111,227,193,0.2);
+  border-radius: var(--radius-md); padding: 10px 14px;
+  font-size: 12px; color: var(--text-secondary);
+}
+.privacy-note strong { color: var(--primary-dark); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links .nav-link { display: none; }
+}
+
+</style>
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    .auth-wrap {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 40px 20px; position: relative;
+    }
+    .auth-wrap::before {
+      content: ''; position: fixed; top: -150px; right: -150px;
+      width: 500px; height: 500px; pointer-events: none;
+      background: radial-gradient(circle, rgba(111,227,193,0.14) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .auth-card {
+      width: 100%; max-width: 440px;
+      background: var(--surface); border-radius: var(--radius-xl);
+      padding: 44px 40px; box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(111,227,193,0.18);
+      position: relative; z-index: 1;
+    }
+    .auth-header { text-align: center; margin-bottom: 32px; }
+    .auth-logo { width: 52px; height: 52px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px; }
+    .auth-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .auth-header p { font-size: 14px; color: var(--text-secondary); }
+    .auth-form { display: flex; flex-direction: column; gap: 18px; }
+    .auth-footer { text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-secondary); }
+    .auth-footer a { color: var(--primary-dark); font-weight: 600; text-decoration: none; }
+    .auth-footer a:hover { text-decoration: underline; }
+    .btn-submit { margin-top: 4px; position: relative; }
+    .btn-submit .spinner { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); }
+    .forgot { text-align: right; margin-top: -10px; }
+    .forgot a { font-size: 12px; color: var(--text-secondary); text-decoration: none; }
+    .forgot a:hover { color: var(--primary-dark); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">
+    <div class="logo-slot">🌿</div>
+    <span class="site-name">UpWell</span>
+  </a>
+  <div class="nav-links" id="nav-links"></div>
+</nav>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">🌿</div>
+      <h1>Bem-vindo de volta</h1>
+      <p>Entra na tua conta para aceder aos teus planos</p>
+    </div>
+
+    <div class="alert alert-error" id="alert">
+      <span>⚠</span><span class="alert-msg"></span>
+    </div>
+
+    <div class="auth-form">
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input class="form-input" type="email" id="email" placeholder="o.teu@email.com" autocomplete="email">
+        <span class="form-error" id="email-error"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-input" type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+        <span class="form-error" id="password-error"></span>
+      </div>
+
+      <div class="forgot"><a href="#">Esqueceste a password?</a></div>
+
+      <div class="privacy-note">
+        <span>🔒</span>
+        <span>O teu email é guardado <strong>separadamente</strong> dos dados de uso. Os dados de saúde nunca são persistidos.</span>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-submit" id="btn-login" onclick="handleLogin()">
+        <span id="btn-text">Entrar</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+    </div>
+
+    <div class="auth-footer">
+      Ainda não tens conta? <a href="register.html">Criar conta grátis</a>
+    </div>
+  </div>
+</div>
+
+<div class="footer-mini">
+  <a href="index.html">UpWell</a> · Projeto de hackathon · Privacy by design
+</div>
+
+<script src="auth.js"></script>
+<script>
+  renderNav('login');
+  Auth.redirectIfAuth('gerar.html');
+
+  document.getElementById('email').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+  document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+  async function handleLogin() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    clearError('email'); clearError('password'); hideAlert('alert');
+    let valid = true;
+
+    if (!email) { showError('email', 'Insere o teu email.'); valid = false; }
+    else if (!/\S+@\S+\.\S+/.test(email)) { showError('email', 'Email inválido.'); valid = false; }
+    if (!password) { showError('password', 'Insere a tua password.'); valid = false; }
+    if (!valid) return;
+
+    setLoading('btn-login', 'spinner', true);
+    document.getElementById('btn-text').textContent = 'A entrar…';
+
+    await new Promise(r => setTimeout(r, 600)); // simula latência
+
+    const result = await Auth.login(email, password);
+    setLoading('btn-login', 'spinner', false);
+    document.getElementById('btn-text').textContent = 'Entrar';
+
+    if (result.ok) {
+      window.location.href = 'gerar.html';
+    } else {
+      showAlert('alert', result.error);
+    }
+  }
+</script>
+</body>
+</html>

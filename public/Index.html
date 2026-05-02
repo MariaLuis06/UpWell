@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UpWell — Alimentação adaptada à tua medicação</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary:       #6FE3C1;
+  --primary-dark:  #3BC6A4;
+  --accent:        #A8F0DC;
+  --bg:            #F4FFFB;
+  --surface:       #FFFFFF;
+  --text-primary:  #1F2D2A;
+  --text-secondary:#5F7D75;
+  --error:         #E53E3E;
+  --radius-sm:     8px;
+  --radius-md:     14px;
+  --radius-lg:     24px;
+  --radius-xl:     36px;
+  --shadow-sm:     0 2px 8px rgba(31,45,42,0.06);
+  --shadow-md:     0 8px 32px rgba(31,45,42,0.08);
+  --shadow-lg:     0 20px 60px rgba(31,45,42,0.1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 { font-family: 'Poppins', sans-serif; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(244,255,251,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(111,227,193,0.2);
+  padding: 0 40px; height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-slot {
+  width: 38px; height: 38px; border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.site-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: var(--text-primary); }
+.nav-links { display: flex; align-items: center; gap: 6px; }
+.nav-link {
+  font-size: 14px; font-weight: 500; color: var(--text-secondary);
+  text-decoration: none; padding: 8px 14px; border-radius: var(--radius-sm);
+  transition: color .2s, background .2s;
+}
+.nav-link:hover { color: var(--text-primary); background: rgba(111,227,193,0.12); }
+.nav-link.active { color: var(--primary-dark); font-weight: 600; }
+.btn-nav {
+  background: var(--primary-dark); color: white;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px;
+  padding: 9px 20px; border-radius: var(--radius-sm); border: none;
+  cursor: pointer; transition: background .2s, transform .15s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-nav:hover { background: #2eaf90; transform: translateY(-1px); }
+.btn-nav-ghost {
+  background: transparent; color: var(--text-secondary);
+  font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(95,125,117,0.22); cursor: pointer;
+  transition: border-color .2s, color .2s; text-decoration: none;
+  display: inline-flex; align-items: center;
+}
+.btn-nav-ghost:hover { border-color: var(--primary); color: var(--text-primary); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px;
+  padding: 13px 28px; border-radius: var(--radius-md); border: none;
+  cursor: pointer; transition: all .2s; text-decoration: none; white-space: nowrap;
+}
+.btn-primary {
+  background: var(--primary-dark); color: white;
+  box-shadow: 0 4px 20px rgba(59,198,164,0.28);
+}
+.btn-primary:hover { background: #2eaf90; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(59,198,164,0.38); }
+.btn-primary:disabled { background: #a8d5c9; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-ghost {
+  background: transparent; color: var(--text-secondary);
+  border: 1.5px solid rgba(95,125,117,0.25);
+}
+.btn-ghost:hover { border-color: var(--primary); color: var(--text-primary); background: rgba(111,227,193,0.06); }
+.btn-white { background: white; color: var(--primary-dark); }
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.btn-full { width: 100%; }
+.btn-sm { padding: 9px 18px; font-size: 14px; }
+
+/* ── FORM ELEMENTS ── */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-size: 13px; font-weight: 600; color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+.form-input, .form-select {
+  width: 100%; padding: 13px 16px;
+  border: 1.5px solid rgba(95,125,117,0.22);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif; font-size: 15px;
+  color: var(--text-primary); background: var(--surface);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none; appearance: none;
+}
+.form-input:focus, .form-select:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(111,227,193,0.2);
+}
+.form-input::placeholder { color: #9ab8b0; }
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235F7D75' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px; cursor: pointer;
+}
+.form-hint { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.form-error { font-size: 12px; color: var(--error); margin-top: 2px; display: none; }
+.form-error.visible { display: block; }
+.input-error { border-color: var(--error) !important; }
+
+/* ── ALERTS ── */
+.alert {
+  padding: 12px 16px; border-radius: var(--radius-md);
+  font-size: 14px; display: flex; align-items: flex-start; gap: 10px;
+  display: none;
+}
+.alert.visible { display: flex; }
+.alert-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+.alert-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+.alert-info { background: rgba(111,227,193,0.1); color: var(--primary-dark); border: 1px solid rgba(111,227,193,0.3); }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface); border-radius: var(--radius-lg);
+  border: 1px solid rgba(111,227,193,0.18); box-shadow: var(--shadow-md);
+}
+
+/* ── DIVIDER ── */
+.divider { display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: 13px; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(95,125,117,0.18); }
+
+/* ── BADGE ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(111,227,193,0.12); border: 1px solid rgba(111,227,193,0.3);
+  border-radius: 100px; padding: 4px 12px;
+  font-size: 12px; font-weight: 600; color: var(--primary-dark);
+}
+
+/* ── LOADING SPINNER ── */
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+.spinner.visible { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── FOOTER MINI ── */
+.footer-mini {
+  background: var(--text-primary); color: rgba(255,255,255,0.4);
+  text-align: center; font-size: 12px; padding: 20px;
+}
+.footer-mini a { color: var(--primary); text-decoration: none; }
+
+/* ── PRIVACY BADGE ── */
+.privacy-note {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(111,227,193,0.08); border: 1px solid rgba(111,227,193,0.2);
+  border-radius: var(--radius-md); padding: 10px 14px;
+  font-size: 12px; color: var(--text-secondary);
+}
+.privacy-note strong { color: var(--primary-dark); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links .nav-link { display: none; }
+}
+
+</style>
+  <style>
+    body::before {
+      content: ''; position: fixed; top: -200px; right: -200px;
+      width: 600px; height: 600px; pointer-events: none; z-index: 0;
+      background: radial-gradient(circle, rgba(111,227,193,0.16) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    body::after {
+      content: ''; position: fixed; bottom: -150px; left: -150px;
+      width: 500px; height: 500px; pointer-events: none; z-index: 0;
+      background: radial-gradient(circle, rgba(168,240,220,0.13) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 100px 40px 80px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 60px;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(111,227,193,0.14); border: 1px solid rgba(111,227,193,0.3);
+      border-radius: 100px; padding: 5px 14px;
+      font-size: 12px; font-weight: 600; color: var(--primary-dark); margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(34px, 5vw, 54px); font-weight: 800;
+      line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 20px;
+    }
+    .hero h1 .hl {
+      color: var(--primary-dark); position: relative; display: inline-block;
+    }
+    .hero p { font-size: 17px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 36px; max-width: 440px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* HERO CARD */
+    .hero-card {
+      background: var(--surface); border-radius: var(--radius-xl);
+      padding: 30px; box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(111,227,193,0.2); position: relative; overflow: hidden;
+    }
+    .hero-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    }
+    .hero-card-badge {
+      position: absolute; top: -14px; right: 24px;
+      background: var(--primary); color: var(--text-primary);
+      font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 11px;
+      padding: 5px 13px; border-radius: 100px;
+      box-shadow: 0 4px 12px rgba(111,227,193,0.4);
+    }
+    .hero-card-label { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 14px; }
+    .hero-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 18px; }
+    .se-list { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
+    .se-list li { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--text-secondary); }
+    .se-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+    .plan-preview { background: var(--bg); border-radius: var(--radius-md); padding: 14px; border: 1px solid rgba(111,227,193,0.2); }
+    .plan-row { display: flex; align-items: center; gap: 12px; padding: 7px 0; border-bottom: 1px solid rgba(111,227,193,0.1); }
+    .plan-row:last-child { border-bottom: none; }
+    .plan-day { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 11px; color: var(--primary-dark); min-width: 28px; }
+    .plan-text { font-size: 12px; color: var(--text-secondary); }
+
+    /* STATS */
+    .stats-strip { position: relative; z-index: 1; background: var(--surface); border-top: 1px solid rgba(111,227,193,0.14); border-bottom: 1px solid rgba(111,227,193,0.14); padding: 30px 40px; }
+    .stats-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .stat { text-align: center; }
+    .stat-n { font-family: 'Poppins', sans-serif; font-size: 30px; font-weight: 800; color: var(--primary-dark); line-height: 1; margin-bottom: 4px; }
+    .stat-l { font-size: 13px; color: var(--text-secondary); }
+
+    /* HOW IT WORKS */
+    .section { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 80px 40px; }
+    .section-header { text-align: center; margin-bottom: 52px; }
+    .section-tag { display: inline-block; background: rgba(111,227,193,0.1); color: var(--primary-dark); font-weight: 600; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 5px 14px; border-radius: 100px; margin-bottom: 12px; }
+    .section-header h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; }
+    .section-header p { font-size: 15px; color: var(--text-secondary); max-width: 460px; margin: 0 auto; line-height: 1.7; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .step-card { background: var(--surface); border-radius: var(--radius-lg); padding: 30px 26px; border: 1px solid rgba(111,227,193,0.18); transition: transform .2s, box-shadow .2s; }
+    .step-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .step-num { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 19px; color: white; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(59,198,164,0.32); }
+    .step-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 9px; }
+    .step-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+
+    /* PRIVACY SECTION */
+    .privacy-section { background: var(--surface); border-top: 1px solid rgba(111,227,193,0.14); border-bottom: 1px solid rgba(111,227,193,0.14); padding: 60px 40px; }
+    .privacy-inner { max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .privacy-left h2 { font-size: 28px; font-weight: 700; margin-bottom: 14px; }
+    .privacy-left p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
+    .privacy-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { background: rgba(111,227,193,0.1); border: 1px solid rgba(111,227,193,0.25); border-radius: 100px; padding: 5px 14px; font-size: 12px; font-weight: 600; color: var(--primary-dark); }
+    .privacy-card { background: var(--bg); border-radius: var(--radius-lg); padding: 24px; border: 1px solid rgba(111,227,193,0.2); display: flex; flex-direction: column; gap: 12px; }
+    .privacy-row { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+    .prv-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; }
+    .prv-ok { background: rgba(111,227,193,0.2); color: var(--primary-dark); }
+    .prv-no { background: rgba(229,62,62,0.1); color: #C53030; }
+    .prv-label { font-weight: 500; color: var(--text-primary); }
+    .prv-sub { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+
+    /* CTA */
+    .cta-section { position: relative; z-index: 1; max-width: 1020px; margin: 80px auto; padding: 0 40px; }
+    .cta-box { background: linear-gradient(135deg, var(--primary-dark) 0%, #2eaf90 100%); border-radius: var(--radius-xl); padding: 60px; text-align: center; position: relative; overflow: hidden; }
+    .cta-box::before { content: ''; position: absolute; top: -60px; right: -60px; width: 260px; height: 260px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+    .cta-box h2 { font-size: clamp(24px, 4vw, 38px); font-weight: 800; color: white; margin-bottom: 12px; position: relative; z-index: 1; }
+    .cta-box p { font-size: 16px; color: rgba(255,255,255,0.78); margin-bottom: 28px; position: relative; z-index: 1; }
+
+    /* FOOTER */
+    footer { background: var(--text-primary); color: white; padding: 52px 40px 32px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+    .footer-tagline { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 40px; margin-left: 50px; }
+    .footer-hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin-bottom: 36px; }
+    .footer-team-title { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); margin-bottom: 18px; }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; margin-bottom: 40px; }
+    .team-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius-md); padding: 14px 16px; transition: background .2s, border-color .2s; }
+    .team-card:hover { background: rgba(111,227,193,0.07); border-color: rgba(111,227,193,0.18); }
+    .team-name { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 14px; color: white; margin-bottom: 3px; }
+    .team-role { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 9px; }
+    .team-email { font-size: 12px; color: var(--primary); text-decoration: none; transition: color .2s; }
+    .team-email:hover { color: var(--accent); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.28); }
+    .footer-built { font-size: 12px; color: rgba(255,255,255,0.22); }
+    .footer-built span { color: var(--primary); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-left > * { animation: fadeUp .55s ease both; }
+    .hero-left > *:nth-child(1) { animation-delay: .05s; }
+    .hero-left > *:nth-child(2) { animation-delay: .15s; }
+    .hero-left > *:nth-child(3) { animation-delay: .25s; }
+    .hero-left > *:nth-child(4) { animation-delay: .35s; }
+    .hero-visual { animation: fadeUp .65s ease .28s both; }
+
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; padding: 60px 20px 40px; gap: 36px; }
+      .hero-visual { order: -1; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); }
+      .steps { grid-template-columns: 1fr; }
+      .privacy-inner { grid-template-columns: 1fr; }
+      .section { padding: 60px 20px; }
+      .cta-box { padding: 40px 24px; }
+      footer { padding: 44px 20px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">
+    <div class="logo-slot">🌿</div>
+    <span class="site-name">UpWell</span>
+  </a>
+  <div class="nav-links" id="nav-links"></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">✦ Bem-estar personalizado</div>
+    <h1>A tua alimentação<br>adaptada à tua<br><span class="hl">medicação</span></h1>
+    <p>Indica a tua condição e medicamento — geramos um plano alimentar semanal que contrabalança os efeitos secundários e melhora o teu dia a dia.</p>
+    <div class="hero-actions">
+      <a href="register.html" class="btn btn-primary">Criar conta grátis</a>
+      <a href="#como-funciona" class="btn btn-ghost">Como funciona</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-card">
+      <p class="hero-card-label">Exemplo de resultado</p>
+      <h3>Diabetes · Metformina</h3>
+      <ul class="se-list">
+        <li><span class="se-dot"></span>Náuseas e desconforto gástrico</li>
+        <li><span class="se-dot"></span>Défice de vitamina B12</li>
+        <li><span class="se-dot"></span>Falta de apetite</li>
+      </ul>
+      <div class="plan-preview">
+        <div class="plan-row"><span class="plan-day">Seg</span><span class="plan-text">Iogurte com granola · Salmão grelhado · Tofu com legumes</span></div>
+        <div class="plan-row"><span class="plan-day">Ter</span><span class="plan-text">Ovos mexidos · Quinoa com grão · Frango com espinafres</span></div>
+        <div class="plan-row"><span class="plan-day">Qua</span><span class="plan-text">Batido verde · Lentilhas · Bacalhau com batata-doce</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-n">8+</div><div class="stat-l">Doenças suportadas</div></div>
+    <div class="stat"><div class="stat-n">20+</div><div class="stat-l">Medicamentos</div></div>
+    <div class="stat"><div class="stat-n">7</div><div class="stat-l">Dias de plano gerado</div></div>
+    <div class="stat"><div class="stat-n">0</div><div class="stat-l">Dados de saúde guardados</div></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="como-funciona">
+  <div class="section-header">
+    <div class="section-tag">Como funciona</div>
+    <h2>Três passos simples</h2>
+    <p>Sem formulários longos, sem dados sensíveis guardados. Rápido, privado e personalizado.</p>
+  </div>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>Indica a tua doença</h3>
+      <p>Escolhe a tua condição de saúde — diabetes, hipertensão, depressão, e mais. Nada é guardado.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>Seleciona o medicamento</h3>
+      <p>O sistema identifica os efeitos secundários relevantes da tua medicação de forma automática.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>Recebe o teu plano</h3>
+      <p>A IA gera um plano alimentar semanal personalizado que compensa cada efeito secundário.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<div class="privacy-section">
+  <div class="privacy-inner">
+    <div class="privacy-left">
+      <div class="section-tag" style="margin-bottom:14px">Privacy by design</div>
+      <h2>A tua saúde é tua.</h2>
+      <p>Construímos o UpWell com privacidade como princípio base, não como adição. Os seus dados de saúde nunca são guardados — existem apenas em memória durante a geração do plano.</p>
+      <div class="privacy-chips">
+        <span class="chip">Perfis anónimos</span>
+        <span class="chip">Dados efémeros</span>
+        <span class="chip">Opt-in consciente</span>
+        <span class="chip">Sem rastreio</span>
+      </div>
+    </div>
+    <div class="privacy-card">
+      <div class="privacy-row">
+        <div class="prv-icon prv-ok">✓</div>
+        <div><div class="prv-label">Perfil anónimo (anon_id)</div><div class="prv-sub">Gerado localmente, nunca enviado</div></div>
+      </div>
+      <div class="privacy-row">
+        <div class="prv-icon prv-ok">✓</div>
+        <div><div class="prv-label">Preferências guardadas</div><div class="prv-sub">Indexadas pelo anon_id, sem nome</div></div>
+      </div>
+      <div class="privacy-row">
+        <div class="prv-icon prv-ok">✓</div>
+        <div><div class="prv-label">Email opcional</div><div class="prv-sub">Ligação separada e controlada</div></div>
+      </div>
+      <div class="privacy-row">
+        <div class="prv-icon prv-no">✕</div>
+        <div><div class="prv-label">Doença / medicamento</div><div class="prv-sub">Nunca persistidos — efémeros por design</div></div>
+      </div>
+      <div class="privacy-row">
+        <div class="prv-icon prv-no">✕</div>
+        <div><div class="prv-label">Dados de saúde</div><div class="prv-sub">Nunca guardados em nenhum sistema</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-box">
+    <h2>Pronto para comer melhor?</h2>
+    <p>Cria uma conta gratuita e gera o teu primeiro plano em menos de 30 segundos.</p>
+    <a href="register.html" class="btn btn-white">Começar agora — é grátis</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo-slot">🌿</div>
+      <span class="site-name">UpWell</span>
+    </div>
+    <p class="footer-tagline">Alimentação inteligente para quem cuida da saúde.</p>
+    <hr class="footer-hr">
+    <p class="footer-team-title">A equipa</p>
+    <div class="team-grid">
+      <div class="team-card">
+        <p class="team-name">Nome do membro</p>
+        <p class="team-role">Função na equipa</p>
+        <a href="mailto:email@exemplo.com" class="team-email">email@exemplo.com</a>
+      </div>
+      <div class="team-card">
+        <p class="team-name">Nome do membro</p>
+        <p class="team-role">Função na equipa</p>
+        <a href="mailto:email@exemplo.com" class="team-email">email@exemplo.com</a>
+      </div>
+      <div class="team-card">
+        <p class="team-name">Nome do membro</p>
+        <p class="team-role">Função na equipa</p>
+        <a href="mailto:email@exemplo.com" class="team-email">email@exemplo.com</a>
+      </div>
+      <div class="team-card">
+        <p class="team-name">Nome do membro</p>
+        <p class="team-role">Função na equipa</p>
+        <a href="mailto:email@exemplo.com" class="team-email">email@exemplo.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 UpWell. Projeto de hackathon.</span>
+      <span class="footer-built">Construído com <span>♥</span> em 48 horas</span>
+    </div>
+  </div>
+</footer>
+
+<script src="auth.js"></script>
+<script>renderNav('home');</script>
+</body>
+</html>

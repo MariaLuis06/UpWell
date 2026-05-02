@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerar plano — UpWell</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#6FE3C1;--primary-dark:#3BC6A4;--accent:#A8F0DC;--bg:#F4FFFB;--surface:#FFFFFF;--text-primary:#1F2D2A;--text-secondary:#5F7D75;--error:#E53E3E;--radius-sm:8px;--radius-md:14px;--radius-lg:24px;--radius-xl:36px;--shadow-md:0 8px 32px rgba(31,45,42,0.08)}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;-webkit-font-smoothing:antialiased}
+    h1,h2,h3,h4,h5{font-family:'Poppins',sans-serif}
+    nav{position:sticky;top:0;z-index:100;background:rgba(244,255,251,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(111,227,193,.2);padding:0 40px;height:68px;display:flex;align-items:center;justify-content:space-between}
+    .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+    .logo-slot{width:38px;height:38px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;align-items:center;justify-content:center;font-size:18px}
+    .site-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:19px;color:var(--text-primary)}
+    .nav-links{display:flex;align-items:center;gap:6px}
+    .nav-link{font-size:14px;font-weight:500;color:var(--text-secondary);text-decoration:none;padding:8px 14px;border-radius:var(--radius-sm);transition:color .2s,background .2s}
+    .nav-link:hover{color:var(--text-primary);background:rgba(111,227,193,.12)}
+    .nav-link.active{color:var(--primary-dark);font-weight:600}
+    .btn-nav{background:var(--primary-dark);color:white;font-family:'Inter',sans-serif;font-weight:600;font-size:14px;padding:9px 20px;border-radius:var(--radius-sm);border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:background .2s,transform .15s}
+    .btn-nav:hover{background:#2eaf90;transform:translateY(-1px)}
+    .btn-nav-ghost{background:transparent;color:var(--text-secondary);font-family:'Inter',sans-serif;font-weight:500;font-size:14px;padding:9px 18px;border-radius:var(--radius-sm);border:1.5px solid rgba(95,125,117,.22);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;transition:border-color .2s,color .2s}
+    .btn-nav-ghost:hover{border-color:var(--primary);color:var(--text-primary)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Inter',sans-serif;font-weight:600;font-size:15px;padding:13px 28px;border-radius:var(--radius-md);border:none;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap}
+    .btn-primary{background:var(--primary-dark);color:white;box-shadow:0 4px 20px rgba(59,198,164,.28)}
+    .btn-primary:hover{background:#2eaf90;transform:translateY(-2px);box-shadow:0 8px 28px rgba(59,198,164,.38)}
+    .btn-primary:disabled{background:#a8d5c9;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-full{width:100%}
+    .form-group{display:flex;flex-direction:column;gap:6px}
+    .form-label{font-size:13px;font-weight:600;color:var(--text-primary);letter-spacing:.02em}
+    .form-label-sub{font-weight:400;color:var(--text-secondary);font-size:12px;margin-left:4px}
+    .form-select{width:100%;padding:13px 16px;border:1.5px solid rgba(95,125,117,.22);border-radius:var(--radius-md);font-family:'Inter',sans-serif;font-size:15px;color:var(--text-primary);background:var(--surface);transition:border-color .2s,box-shadow .2s;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235F7D75' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;cursor:pointer}
+    .form-select:focus{border-color:var(--primary-dark);box-shadow:0 0 0 3px rgba(111,227,193,.2)}
+    .form-input{width:100%;padding:13px 16px;border:1.5px solid rgba(95,125,117,.22);border-radius:var(--radius-md);font-family:'Inter',sans-serif;font-size:15px;color:var(--text-primary);background:var(--surface);transition:border-color .2s,box-shadow .2s;outline:none}
+    .form-input:focus{border-color:var(--primary-dark);box-shadow:0 0 0 3px rgba(111,227,193,.2)}
+    .form-input::placeholder{color:#9ab8b0}
+    .form-error{font-size:12px;color:var(--error);margin-top:2px;display:none}
+    .form-error.visible{display:block}
+    .alert{padding:12px 16px;border-radius:var(--radius-md);font-size:14px;display:none;align-items:flex-start;gap:10px}
+    .alert.visible{display:flex}
+    .alert-error{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+    .badge{display:inline-flex;align-items:center;gap:5px;background:rgba(111,227,193,.12);border:1px solid rgba(111,227,193,.3);border-radius:100px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--primary-dark)}
+    .spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none}
+    .spinner.visible{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .page-wrap{max-width:720px;margin:0 auto;padding:60px 24px 80px}
+    .page-header{text-align:center;margin-bottom:44px}
+    .page-header .badge{margin-bottom:16px}
+    .page-header h1{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:10px}
+    .page-header p{font-size:15px;color:var(--text-secondary);line-height:1.7}
+    .form-card{background:var(--surface);border-radius:var(--radius-xl);padding:40px;box-shadow:var(--shadow-md);border:1px solid rgba(111,227,193,.18);display:flex;flex-direction:column;gap:24px}
+    .section-divider{height:1px;background:rgba(111,227,193,.15)}
+
+    /* CATEGORY BUTTONS */
+    .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+    .cat-btn{background:var(--surface);border:2px solid var(--primary-dark);border-radius:var(--radius-md);padding:16px 12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--primary-dark);cursor:pointer;transition:all .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+    .cat-btn:hover{background:rgba(111,227,193,.1);transform:translateY(-2px);box-shadow:0 4px 12px rgba(59,198,164,.15)}
+    .cat-btn.active{background:var(--primary-dark);color:white;box-shadow:0 4px 16px rgba(59,198,164,.3);transform:translateY(-2px)}
+    .cat-btn .cat-icon{font-size:22px}
+    .cat-btn .cat-label{line-height:1.3}
+
+    /* RECOMMENDATIONS */
+    .se-preview{background:var(--bg);border-radius:var(--radius-md);padding:18px 20px;border:1px solid rgba(111,227,193,.2);min-height:80px}
+    .se-preview-label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:12px}
+    .se-list{display:flex;flex-direction:column;gap:8px}
+    .se-item{font-size:13px;color:var(--text-secondary);line-height:1.5;display:flex;gap:8px;align-items:flex-start}
+    .se-item::before{content:'•';color:var(--primary-dark);font-weight:700;flex-shrink:0;margin-top:1px}
+    .se-empty{font-size:13px;color:rgba(95,125,117,.5);font-style:italic}
+
+    /* OPTIONAL BOX */
+    .optional-box{background:var(--bg);border-radius:var(--radius-md);padding:18px 20px;border:1px solid rgba(111,227,193,.2);display:flex;flex-direction:column;gap:10px}
+    .optional-label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-secondary)}
+    .optional-hint{font-size:12px;color:var(--text-secondary);margin-top:-4px}
+
+    .privacy-ephemeral{display:flex;align-items:flex-start;gap:10px;background:rgba(229,62,62,.04);border:1px solid rgba(229,62,62,.15);border-radius:var(--radius-md);padding:12px 14px;font-size:12px;color:var(--text-secondary);line-height:1.55}
+    .privacy-ephemeral strong{color:#C53030}
+    .btn-generate{margin-top:4px;font-size:16px;padding:16px;position:relative}
+    @media(max-width:600px){.cat-grid{grid-template-columns:1fr 1fr}.form-card{padding:24px 20px}}
+    @media(max-width:768px){nav{padding:0 20px}.nav-links .nav-link{display:none}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">
+    <div class="logo-slot">🌿</div>
+    <span class="site-name">UpWell</span>
+  </a>
+  <div class="nav-links" id="nav-links"></div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="badge">✦ Geração de plano</div>
+    <h1>O teu plano personalizado</h1>
+    <p>Diz-nos a tua condição e onde te queres focar. A IA cria um plano adaptado a ti.</p>
+  </div>
+
+  <div class="form-card">
+
+    <!-- CONDIÇÃO -->
+    <div class="form-group">
+      <label class="form-label" for="doenca">Condição de saúde</label>
+      <select class="form-select" id="doenca" onchange="onDoencaChange()">
+        <option value="">Seleciona a tua condição…</option>
+      </select>
+      <span class="form-error" id="doenca-error"></span>
+    </div>
+
+    <!-- CATEGORIAS -->
+    <div class="form-group" id="cat-group" style="display:none">
+      <label class="form-label">Em que área te queres focar? <span class="form-label-sub">(podes escolher mais do que uma)</span></label>
+      <div class="cat-grid" id="cat-buttons"></div>
+      <span class="form-error" id="cat-error"></span>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- OPCIONAIS -->
+    <div class="optional-box">
+      <div class="optional-label">Informações opcionais</div>
+
+      <div class="form-group">
+        <label class="form-label" for="medicamentos">Medicamentos que tomas <span class="form-label-sub">(opcional)</span></label>
+        <input class="form-input" type="text" id="medicamentos" placeholder="Ex: Metformina, Lisinopril… (separa por vírgula)">
+        <span class="optional-hint">Se deixares em branco, o plano baseia-se apenas na tua condição.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="restricoes">Alimentos que não queres no plano <span class="form-label-sub">(opcional)</span></label>
+        <input class="form-input" type="text" id="restricoes" placeholder="Ex: peixe, amendoins, laticínios… (separa por vírgula)">
+      </div>
+    </div>
+
+    <!-- RECOMENDAÇÕES -->
+    <div class="se-preview" id="se-preview">
+      <div class="se-preview-label">Recomendações identificadas</div>
+      <div id="se-list">
+        <span class="se-empty">Seleciona uma condição e área para ver as recomendações</span>
+      </div>
+    </div>
+
+    <div class="privacy-ephemeral">
+      <span>🔒</span>
+      <span><strong>Dados efémeros por design:</strong> a tua condição é usada apenas nesta sessão para gerar o plano. Nunca é guardada em nenhum sistema.</span>
+    </div>
+
+    <div class="alert alert-error" id="alert-gen" style="display:none">
+      <span>⚠</span><span class="alert-msg"></span>
+    </div>
+
+    <button class="btn btn-primary btn-full btn-generate" id="btn-gerar" onclick="gerarPlano()">
+      <span id="btn-text">Gerar o meu plano</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+  Auth.requireAuth('login.html');
+  renderNav('gerar');
+
+  const ICONS = { "Alimentação": "🥗", "Atividade Física": "🏃", "Cuidados": "❤️" };
+
+  const DATA = {
+    "Diabetes": {
+      "Alimentação": ["Aumente o consumo de fibras: espinafre, alface, acelga, brócolos, couve e curgete retardam a absorção do açúcar.","Prefira hidratos de carbono complexos: aveia, arroz integral, quinoa, pão de centeio ou integral.","Inclua proteínas magras: frango, peru, salmão, atum, cavala, tofu, feijão, lentilha e grão-de-bico.","Gorduras saudáveis: azeite como principal gordura, abacate e frutos secos com moderação.","Fruta com moderação: maçã, pera, laranjas, frutos vermelhos — de preferência com casca. Evite sumos.","Evitar: açúcares refinados, doces, bolos, refrigerantes, bebidas alcoólicas, pão branco e batatas fritas."],
+      "Atividade Física": ["Exercício aeróbico regular (caminhada, natação, bicicleta) ajuda a controlar a glicemia.","Musculação e exercícios de resistência aumentam a captação de glicose pelos músculos.","Monitorize a glicemia antes e após o exercício para evitar hipoglicemia.","Evite exercício intenso em períodos de glicemia muito elevada ou muito baixa."],
+      "Cuidados": ["Peso: o défice calórico é essencial se o objetivo for perder peso. Atividades de alto impacto podem ser prejudiciais com excesso de peso significativo.","Jovens: metabolismo mais rápido, toleram exercícios de maior intensidade (HIIT, musculação pesada).","Seniores: foco em exercícios de resistência para combater a sarcopenia e cuidado com o equilíbrio.","Altura: as porções de hidratos e proteínas devem ser proporcionais à estrutura corporal."]
+    },
+    "Hipertensão": {
+      "Alimentação": ["Aumente o potássio e o magnésio: banana, abacate, laranja, espinafre, feijão e água de coco.","Substitua o sal por ervas aromáticas, alho, cebola e limão. Máximo 5g de sal por dia.","Lacticínios magros: iogurte natural desnatado, queijo ricota ou queijo fresco.","Cereais integrais: aveia, arroz e massas integrais ajudam na excreção de sódio.","Evitar: ultraprocessados, enchidos, enlatados, caldos prontos, refrigerantes e carnes gordas."],
+      "Atividade Física": ["Exercícios aeróbicos: caminhar, pedalar ou nadar — mínimo 150 minutos por semana.","Isométricos: Wall Sit durante 2 minutos e Prancha Abdominal são os mais eficazes.","Controlo da respiração: inspirar 4 segundos, expirar 8 segundos — eficaz em picos de stress.","Hidratação: 1,5 a 2 litros de água por dia.","Evitar vícios: não fumar, moderar álcool e cafeína."],
+      "Cuidados": ["Peso: perda de 5–10% do peso corporal pode reduzir significativamente a necessidade de medicação.","Gordura abdominal liberta substâncias que endurecem as artérias e dificultam o controlo da pressão.","Seniores: artérias mais rígidas e maior sensibilidade ao sal — o corte no sal tem impacto rápido.","Altura: pessoas muito altas têm sistema circulatório mais longo, exigindo gestão precisa da pressão."]
+    },
+    "Colesterol": {
+      "Alimentação": ["Fibras solúveis: aveia, linhaça, chia e leguminosas eliminam o colesterol através das fezes.","Gorduras insaturadas: azeite extra virgem, frutos secos e peixes gordos ricos em Ómega-3.","Esteróis vegetais: abacate e sementes bloqueiam a absorção do colesterol no intestino.","Evitar: carnes gordas, enchidos, natas, queijos amarelos, pastelaria e fritos (gordura trans)."],
+      "Atividade Física": ["Exercício aeróbico moderado e contínuo (caminhada rápida, corrida leve, natação) aumenta o HDL.","Regularidade mais importante que intensidade — mínimo 30 a 40 minutos diários.","Evitar o sedentarismo: estar de pé e em movimento ativa a lipoproteína lípase."],
+      "Cuidados": ["Idade: a partir dos 45–50 anos, o fígado é menos eficiente a remover o LDL — dieta mais rigorosa.","Peso: gordura abdominal aumenta os triglicéridos e diminui o HDL. Perder peso é a forma mais rápida de equilibrar.","Altura: define o gasto calórico. Pessoas mais baixas com a mesma ingestão de gorduras têm maior risco.","Atenção: o colesterol tem forte componente genética — há pessoas magras e ativas com colesterol elevado."]
+    },
+    "Obesidade": {
+      "Alimentação": ["Regra do prato: 50% de vegetais (fibras) para ocupar espaço no estômago e atrasar o esvaziamento gástrico.","Proteína em todas as refeições: ovos, frango, peixe ou leguminosas preservam a massa muscular.","Evite calorias líquidas: sumos, refrigerantes e álcool não saciam e acrescentam calorias rapidamente.","Comida real: evite ultraprocessados, concebidos para serem hiperpalatáveis."],
+      "Atividade Física": ["Treino de força (musculação): o músculo queima mais calorias em repouso, acelerando o metabolismo.","NEAT: andar a pé, usar escadas, limpar a casa ou trabalhar de pé pode superar 30 min de ginásio.","Cuidado com o impacto: prefira caminhada, natação, hidroginástica ou bicicleta para proteger as articulações."],
+      "Cuidados": ["TMB: peso e altura definem o gasto calórico em repouso. Comer de menos leva o corpo ao modo de poupança.","Jovens: maior facilidade em ganhar músculo e queimar gordura.","Seniores: metabolismo mais lento, maior perda muscular — proteína mais elevada e exercício de força obrigatório.","Peso inicial elevado: cuidado redobrado na intensidade inicial para evitar lesões."]
+    },
+    "Anemia": {
+      "Alimentação": ["Ferro Heme (animal, fácil absorção): carnes vermelhas com moderação, fígado, gema de ovo, amêijoas e mexilhões.","Ferro Não-Heme (vegetal): feijão, lentilhas, grão-de-bico, espinafres, brócolos e sementes de abóbora.","Vitamina C na mesma refeição (laranja, kiwi, pimento, limão) aumenta drasticamente a absorção do ferro vegetal.","Evitar bloqueadores: café, chá (taninos) e lacticínios (cálcio) logo após as refeições principais."],
+      "Atividade Física": ["Exercício de baixa a moderada intensidade (caminhadas, ioga) enquanto os níveis de ferro não estabilizarem.","Evite corridas de longa distância — podem causar hemólise de impacto (perda de glóbulos vermelhos).","O descanso é fundamental — o organismo anémico precisa de mais tempo para recuperar."],
+      "Cuidados": ["Crianças e adolescentes: crescimento rápido exige muito mais ferro para construir tecidos e sangue.","Mulheres em idade fértil: necessidade muito maior de ferro devido às perdas menstruais.","Seniores: menor absorção gástrica ou inflamações crónicas exigem alimentação mais densa em nutrientes.","Peso: obesidade pode causar 'anemia de inflamação' — o ferro existe mas não é bem utilizado.","Altura: pessoas mais altas têm maior volume sanguíneo e necessidade diária de ferro ligeiramente superior."]
+    },
+    "Osteoporose": {
+      "Alimentação": ["Cálcio: lacticínios (leite, queijo, iogurte), brócolos, couve galega, amêndoas e sementes de sésamo.","Vitamina D: exposição solar 15 min/dia, peixes gordos e gemas de ovo.","Magnésio e Vitamina K: vegetais de folha verde escura e frutos secos fixam o cálcio no osso.","Proteína de qualidade: carne magra, peixe e ovos são essenciais para a matriz de colagénio.","Evitar: excesso de sal, cafeína e refrigerantes de cola (retiram cálcio do osso)."],
+      "Atividade Física": ["Impacto controlado: caminhar, dançar ou subir escadas estimulam o osso a tornar-se mais denso.","Treino de força: musculação ou elásticos estimulam a criação de massa óssea.","Ioga ou pilates: fortalecem o core e melhoram o equilíbrio, prevenindo quedas.","Evitar: flexão extrema da coluna ou alto impacto com densidade óssea muito baixa."],
+      "Cuidados": ["Após a menopausa / avançar da idade: queda de estrogénio e testosterona acelera perda óssea.","Peso muito baixo (IMC baixo): fator de risco — o osso não tem carga para ser estimulado.","Excesso de peso: protege o osso pela carga, mas aumenta risco de queda e fratura grave.","Pessoas muito altas: braços de alavanca maiores aumentam o risco de fratura em caso de queda."]
+    },
+    "Insuficiência Renal": {
+      "Alimentação": ["Controlo da proteína: quantidade moderada e de elevada qualidade (ovo, carnes magras) para evitar acumulação de ureia.","Atenção ao potássio e fósforo: evitar banana, abacate, frutos secos, feijão e integrais. Cozer e descartar a água reduz o potássio.","Gestão de líquidos: pode ser necessário limitar a água para evitar edemas e sobrecarga cardíaca.","Sódio quase zero: o sal retém líquidos e aumenta a pressão, sobrecarregando os rins."],
+      "Atividade Física": ["Intensidade leve a moderada: caminhadas ou ciclismo leve são ideais.","Evitar exercício intenso: pode causar rabdomiólise (quebra muscular) que danifica ainda mais os rins.","Monitorizar a fadiga: anemia frequente na insuficiência renal — não force além do limite.","Evitar desidratação: nunca fazer exercício nas horas de maior calor."],
+      "Cuidados": ["Idade: a Taxa de Filtração Glomerular usa a idade como fator principal. Seniores têm menos reserva renal.","Peso: excesso de peso causa hiperfiltração. A creatinina (exame de rotina) é afetada pela massa muscular.","Altura: estrutura maior exige que o rim filtre maior volume de sangue — ajusta doses de medicação.","Perda muscular muito comum: exercícios de resistência muito leves são essenciais para evitar fragilidade."]
+    },
+    "Insuficiência Hepática Crónica": {
+      "Alimentação": ["Fracionamento: 5 a 6 refeições pequenas por dia. O jejum prolongado é perigoso.","Ceia noturna: lanche com hidratos complexos e proteína evita que o corpo consuma músculo durante a noite.","Proteínas vegetais e lacticínios: melhor toleradas que a carne vermelha (menos amoníaco).","Restrição de sódio quase total para evitar ascite. Substituir por ervas e especiarias.","Proibido: álcool (total), mariscos crus e alimentos muito gordurosos."],
+      "Atividade Física": ["Exercícios de resistência leves (elásticos, pesos leves) para combater a sarcopenia.","Caminhadas curtas de baixo impacto aeróbico são recomendadas.","Evitar desportos de contacto ou atividades com alta pressão abdominal (risco de varizes esofágicas)."],
+      "Cuidados": ["Peso 'falso': ascite e edema aumentam o peso mas a pessoa está a perder músculo. O médico avalia a massa magra.","Altura: usada para calcular o estado nutricional e ajustar doses de proteínas e calorias.","Seniores: risco muito maior de encefalopatia — equilíbrio milimétrico entre proteína e fibras.","Monitorização médica obrigatória: a doença afeta a absorção de vitaminas."]
+    },
+    "Hepatite B": {
+      "Alimentação": ["Proibição total do álcool — regra mais crítica.","Dieta mediterrânica: rica em antioxidantes que combatem os radicais livres no fígado.","Fracionamento: 5 a 6 refeições pequenas por dia, especialmente na fase aguda.","Proteínas magras: peixe, frango sem pele, tofu, leguminosas e cereais integrais.","Evitar: ultraprocessados, enchidos, excesso de açúcar e gorduras saturadas (risco de esteatose)."],
+      "Atividade Física": ["Fase aguda: repouso ou atividade muito moderada, respeitando o cansaço extremo.","Fase crónica: 40 minutos, 4 a 5 vezes por semana para evitar gordura visceral.","Caminhadas rápidas, natação e ciclismo são excelentes para a saúde do fígado.","Musculação ajuda a regular o metabolismo das gorduras."],
+      "Cuidados": ["Peso: IMC elevado aumenta significativamente o risco de cancro do fígado e cirrose.","Obesidade pode diminuir a eficácia das vacinas e de tratamentos antivirais.","Infeção na infância: risco de doença crónica ~90%. Em adultos: menos de 5%.","Altura: ajuda a calcular o IMC ideal e a manter um peso proporcional para proteger o fígado."]
+    },
+    "Doença de Behçet": {
+      "Alimentação": ["Dieta anti-inflamatória: rica em Ómega-3 (peixes gordos, linhaça, nozes).","Antioxidantes: frutos vermelhos, brócolos, cenoura combatem o stress oxidativo vascular.","Crises de aftas: evitar alimentos ácidos, picantes, salgados ou muito duros/crocantes.","Probióticos e fibras para a saúde intestinal (exceto em crise intestinal ativa).","Evitar: açúcares refinados e gorduras trans, que agravam os surtos inflamatórios."],
+      "Atividade Física": ["Exercício moderado em remissão: caminhadas, natação ou ioga reduzem o stress (gatilho de crises).","Artrite associada: preferir hidroginástica e exercícios de baixo impacto.","Respeitar a fadiga crónica — não sobrecarregar o sistema imunitário nos dias difíceis.","Manter-se ativo para prevenir tromboses: evitar estar sentado muitas horas seguidas."],
+      "Cuidados": ["Peso: excesso de peso aumenta a carga inflamatória. Corticoides causam aumento de peso — controlo calórico rigoroso.","Jovens (20–40 anos): doença mais agressiva, estilo de vida mais rigoroso necessário.","Com a idade: sintomas podem estabilizar, mas surgem riscos cardiovasculares.","Altura: monitora o impacto da medicação (imunossupressores) na composição corporal e densidade óssea.","Stress emocional é um dos maiores gatilhos — meditação e respiração são tão importantes quanto a dieta."]
+    }
+  };
+
+  let selectedCats = new Set();
+
+  const doencaEl = document.getElementById('doenca');
+  Object.keys(DATA).forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d; opt.textContent = d;
+    doencaEl.appendChild(opt);
+  });
+
+  function onDoencaChange() {
+    const doenca = doencaEl.value;
+    selectedCats.clear();
+    const catGroup = document.getElementById('cat-group');
+    const catButtons = document.getElementById('cat-buttons');
+    catButtons.innerHTML = '';
+    document.getElementById('se-list').innerHTML = '<span class="se-empty">Seleciona uma área para ver as recomendações</span>';
+    if (doenca && DATA[doenca]) {
+      Object.keys(DATA[doenca]).forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'cat-btn';
+        btn.innerHTML = `<span class="cat-icon">${ICONS[cat] || '📋'}</span><span class="cat-label">${cat}</span>`;
+        btn.onclick = () => toggleCat(cat, btn, doenca);
+        catButtons.appendChild(btn);
+      });
+      catGroup.style.display = 'block';
+    } else {
+      catGroup.style.display = 'none';
+    }
+    clearError('doenca');
+  }
+
+  function toggleCat(cat, btn, doenca) {
+    if (selectedCats.has(cat)) {
+      selectedCats.delete(cat);
+      btn.classList.remove('active');
+    } else {
+      selectedCats.add(cat);
+      btn.classList.add('active');
+    }
+    updateSeList(doenca);
+    clearError('cat');
+  }
+
+  function updateSeList(doenca) {
+    const container = document.getElementById('se-list');
+    if (selectedCats.size === 0) {
+      container.innerHTML = '<span class="se-empty">Seleciona pelo menos uma área</span>';
+      return;
+    }
+    let html = '<div class="se-list">';
+    selectedCats.forEach(cat => {
+      DATA[doenca][cat].forEach(item => {
+        html += `<div class="se-item">${item}</div>`;
+      });
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  async function gerarPlano() {
+    const doenca = doencaEl.value;
+    const medicamentos = document.getElementById('medicamentos').value.trim();
+    const restricoes = document.getElementById('restricoes').value.trim();
+    clearError('doenca'); clearError('cat');
+    let valid = true;
+    if (!doenca) { showError('doenca', 'Seleciona a tua condição.'); valid = false; }
+    if (selectedCats.size === 0) { showError('cat', 'Seleciona pelo menos uma área.'); valid = false; }
+    if (!valid) return;
+
+    const cats = Array.from(selectedCats);
+    const recomendacoes = cats.flatMap(cat => DATA[doenca][cat]);
+
+    setLoading('btn-gerar', 'spinner', true);
+    document.getElementById('btn-text').textContent = 'A gerar o plano…';
+    sessionStorage.setItem('plan_context', JSON.stringify({ doenca, cats, medicamentos }));
+
+    try {
+      const res = await fetch('http://localhost:3000/api/gerar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ doenca, medicamento: medicamentos || null, sideEffects: recomendacoes, restricoes })
+      });
+
+      const data = await res.json();
+
+      if (data.plano) {
+        sessionStorage.setItem('plano_gerado', data.plano);
+        window.location.href = 'resultado.html';
+      } else {
+        setLoading('btn-gerar', 'spinner', false);
+        document.getElementById('btn-text').textContent = 'Gerar o meu plano';
+        showAlert('alert-gen', 'Erro ao gerar o plano. Tenta de novo.');
+      }
+    } catch (err) {
+      setLoading('btn-gerar', 'spinner', false);
+      document.getElementById('btn-text').textContent = 'Gerar o meu plano';
+      showAlert('alert-gen', 'Servidor inacessível. Confirma que o servidor está a correr.');
+    }
+  }
+
+  function showError(fieldId, msg) {
+    const el = document.getElementById(fieldId + '-error');
+    if (el) { el.textContent = msg; el.classList.add('visible'); }
+  }
+  function clearError(fieldId) {
+    const el = document.getElementById(fieldId + '-error');
+    if (el) el.classList.remove('visible');
+  }
+  function showAlert(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = 'flex';
+    el.querySelector('.alert-msg').textContent = msg;
+  }
+  function setLoading(btnId, spinnerId, loading) {
+    const btn = document.getElementById(btnId);
+    const sp = document.getElementById(spinnerId);
+    if (btn) btn.disabled = loading;
+    if (sp) sp.classList.toggle('visible', loading);
+  }
+</script>
+</body>
+</html>
