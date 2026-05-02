@@ -182,6 +182,8 @@ function showAlert(id, msg, type = 'error') {
   if (!el) return;
   el.className = `alert alert-${type} visible`;
   el.querySelector('.alert-msg').textContent = msg;
+  const icon = el.querySelector('span:first-child');
+  if (icon) icon.textContent = type === 'success' ? '✓' : '⚠';
 }
 
 function hideAlert(id) {

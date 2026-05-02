@@ -59,8 +59,18 @@ profileDb.exec(`
     medical_conditions TEXT,
     medications TEXT,
     notes TEXT,
+    side_effects TEXT,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS planos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    profile_token TEXT NOT NULL,
+    doenca TEXT NOT NULL,
+    categorias TEXT,
+    plano TEXT NOT NULL,
+    criado_em INTEGER NOT NULL
   );
 `);
 
@@ -96,6 +106,7 @@ function sanitizeProfileRow(row) {
     medicalConditions: row.medical_conditions || '',
     medications: row.medications || '',
     notes: row.notes || '',
+    sideEffects: row.side_effects || '',
     updatedAt: row.updated_at
   };
 }
@@ -251,6 +262,7 @@ app.post('/api/profile/me', requireSession, (req, res) => {
     allergies,
     medicalConditions,
     medications,
+    sideEffects,
     notes
   } = req.body;
 
@@ -271,8 +283,8 @@ app.post('/api/profile/me', requireSession, (req, res) => {
   const now = Date.now();
   profileDb.prepare(`
     INSERT INTO profiles (
-      profile_token, age, weight_kg, height_cm, allergies, medical_conditions, medications, notes, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      profile_token, age, weight_kg, height_cm, allergies, medical_conditions, medications, side_effects, notes, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(profile_token) DO UPDATE SET
       age = excluded.age,
       weight_kg = excluded.weight_kg,
@@ -280,6 +292,7 @@ app.post('/api/profile/me', requireSession, (req, res) => {
       allergies = excluded.allergies,
       medical_conditions = excluded.medical_conditions,
       medications = excluded.medications,
+      side_effects = excluded.side_effects,
       notes = excluded.notes,
       updated_at = excluded.updated_at
   `).run(
@@ -290,6 +303,7 @@ app.post('/api/profile/me', requireSession, (req, res) => {
     (allergies || '').trim(),
     (medicalConditions || '').trim(),
     (medications || '').trim(),
+    (sideEffects || '').trim(),
     (notes || '').trim(),
     now,
     now
@@ -337,6 +351,7 @@ app.post('/api/gerar', requireSession, async (req, res) => {
     profileContext.allergies ? `Alergias/restricoes clinicas: ${profileContext.allergies}` : null,
     profileContext.medicalConditions ? `Outras condicoes relevantes: ${profileContext.medicalConditions}` : null,
     profileContext.medications ? `Medicacao habitual no perfil: ${profileContext.medications}` : null,
+    profileContext.sideEffects ? `Efeitos secundarios conhecidos da medicacao do perfil: ${profileContext.sideEffects}` : null,
     profileContext.notes ? `Notas adicionais do perfil: ${profileContext.notes}` : null
   ].filter(Boolean).join('\n') : '';
 
@@ -379,11 +394,39 @@ Se houver informacao clinica insuficiente, nao inventes diagnosticos nem doses.`
       return res.status(500).json({ ok: false, error: 'Erro ao gerar plano.' });
     }
 
+    try {
+      profileDb.prepare(
+        'INSERT INTO planos (profile_token, doenca, categorias, plano, criado_em) VALUES (?, ?, ?, ?, ?)'
+      ).run(req.session.profile_token, doenca, medicamento || '', plano, Date.now());
+    } catch (saveErr) {
+      console.error('Erro ao guardar plano:', saveErr);
+    }
+
     res.json({ ok: true, plano });
   } catch (err) {
     console.error('Erro GROQ:', err);
     res.status(500).json({ ok: false, error: 'Erro ao contactar a IA.' });
   }
+});
+
+app.get('/api/planos', requireSession, (req, res) => {
+  const rows = profileDb.prepare(
+    'SELECT id, doenca, categorias, criado_em FROM planos WHERE profile_token = ? ORDER BY criado_em DESC LIMIT 20'
+  ).all(req.session.profile_token);
+  res.json({ ok: true, planos: rows });
+});
+
+app.get('/api/planos/:id', requireSession, (req, res) => {
+  const row = profileDb.prepare(
+    'SELECT * FROM planos WHERE id = ? AND profile_token = ?'
+  ).get(req.params.id, req.session.profile_token);
+  if (!row) return res.status(404).json({ ok: false, error: 'Plano nao encontrado.' });
+  res.json({ ok: true, plano: row.plano, doenca: row.doenca, categorias: row.categorias, criado_em: row.criado_em });
+});
+
+app.delete('/api/planos/:id', requireSession, (req, res) => {
+  profileDb.prepare('DELETE FROM planos WHERE id = ? AND profile_token = ?').run(req.params.id, req.session.profile_token);
+  res.json({ ok: true });
 });
 
 app.listen(PORT, () => {

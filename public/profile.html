@@ -3,287 +3,156 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perfil clinico - UpWell</title>
+  <title>Perfil clínico — UpWell</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#6FE3C1;--primary-dark:#3BC6A4;--accent:#A8F0DC;--bg:#F4FFFB;--surface:#FFFFFF;--text-primary:#1F2D2A;--text-secondary:#5F7D75;--error:#E53E3E;--radius-sm:8px;--radius-md:14px;--radius-lg:24px;--radius-xl:36px;--shadow-md:0 8px 32px rgba(31,45,42,0.08);--shadow-lg:0 20px 60px rgba(31,45,42,0.1)}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;-webkit-font-smoothing:antialiased}
+    h1,h2,h3{font-family:'Poppins',sans-serif}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* NAV */
+    nav{position:sticky;top:0;z-index:100;background:rgba(244,255,251,.9);backdrop-filter:blur(14px);border-bottom:1px solid rgba(111,227,193,.2);padding:0 40px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+    .site-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:19px;color:var(--text-primary)}
+    .nav-links{display:flex;align-items:center;gap:6px}
+    .nav-link{font-size:14px;font-weight:500;color:var(--text-secondary);text-decoration:none;padding:8px 14px;border-radius:var(--radius-sm);transition:color .2s,background .2s}
+    .nav-link:hover{color:var(--text-primary);background:rgba(111,227,193,.12)}
+    .nav-link.active{color:var(--primary-dark);font-weight:600}
+    .btn-nav-ghost{background:transparent;color:var(--text-secondary);font-family:'Inter',sans-serif;font-weight:500;font-size:14px;padding:9px 18px;border-radius:var(--radius-sm);border:1.5px solid rgba(95,125,117,.22);cursor:pointer;transition:border-color .2s,color .2s}
+    .btn-nav-ghost:hover{border-color:var(--primary);color:var(--text-primary)}
 
-:root {
-  --primary: #6FE3C1;
-  --primary-dark: #3BC6A4;
-  --bg: #F4FFFB;
-  --surface: #FFFFFF;
-  --text-primary: #1F2D2A;
-  --text-secondary: #5F7D75;
-  --error: #E53E3E;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 24px;
-  --radius-xl: 36px;
-  --shadow-md: 0 8px 32px rgba(31,45,42,0.08);
-  --shadow-lg: 0 20px 60px rgba(31,45,42,0.1);
-}
+    /* PAGE */
+    .page{max-width:980px;margin:0 auto;padding:48px 24px 80px}
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text-primary);
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
+    /* HERO CARDS */
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-bottom:28px}
+    .hero-card{background:var(--surface);border-radius:var(--radius-xl);border:1px solid rgba(111,227,193,.2);box-shadow:var(--shadow-lg);padding:32px;position:relative;overflow:hidden}
+    .hero-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(111,227,193,.2),transparent 35%),linear-gradient(135deg,rgba(111,227,193,.08),rgba(255,255,255,0));pointer-events:none}
+    .hero-card>*{position:relative;z-index:1}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(111,227,193,.12);border:1px solid rgba(111,227,193,.26);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--primary-dark);margin-bottom:16px}
+    .hero-card h1{font-size:clamp(26px,4vw,38px);line-height:1.1;margin-bottom:14px}
+    .hero-card p{color:var(--text-secondary);line-height:1.7;font-size:15px}
+    .aside{background:linear-gradient(180deg,#1F2D2A,#28423D);color:rgba(255,255,255,.88);border-radius:var(--radius-xl);padding:28px;box-shadow:var(--shadow-md)}
+    .aside h2{font-size:18px;margin-bottom:14px}
+    .aside ul{list-style:none;display:grid;gap:12px}
+    .aside li{padding:12px 14px;border-radius:var(--radius-md);background:rgba(255,255,255,.06);line-height:1.5;font-size:14px}
 
-h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+    /* FORM CARD */
+    .form-card{background:var(--surface);border-radius:var(--radius-xl);border:1px solid rgba(111,227,193,.2);box-shadow:var(--shadow-lg);padding:36px;margin-bottom:28px}
+    .section-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:28px}
+    .section-title h2{font-size:22px}
+    .section-title p{color:var(--text-secondary);font-size:14px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+    .full{grid-column:1/-1}
 
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(244,255,251,0.9);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(111,227,193,0.2);
-  padding: 0 40px; height: 68px;
-  display: flex; align-items: center; justify-content: space-between;
-}
+    /* FORM ELEMENTS */
+    .form-group{display:flex;flex-direction:column;gap:7px}
+    .form-label{font-size:13px;font-weight:600;color:var(--text-primary);letter-spacing:.02em}
+    .form-label-sub{font-weight:400;color:var(--text-secondary);font-size:12px;margin-left:4px}
+    .form-input,.form-select,.form-textarea{width:100%;padding:13px 16px;border:1.5px solid rgba(95,125,117,.22);border-radius:var(--radius-md);font-family:'Inter',sans-serif;font-size:15px;background:var(--surface);color:var(--text-primary);outline:none;transition:border-color .2s,box-shadow .2s}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary-dark);box-shadow:0 0 0 3px rgba(111,227,193,.2)}
+    .form-input::placeholder,.form-textarea::placeholder{color:#9ab8b0}
+    .form-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235F7D75' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+    .form-textarea{min-height:100px;resize:vertical}
+    .form-hint{font-size:12px;color:var(--text-secondary)}
+    .form-error{font-size:12px;color:var(--error);display:none}
+    .form-error.visible{display:block}
+    .input-error{border-color:var(--error)!important}
 
-.nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.logo-slot {
-  width: 38px; height: 38px; border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-}
-.site-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: var(--text-primary); }
-.nav-links { display: flex; align-items: center; gap: 6px; }
-.nav-link {
-  font-size: 14px; font-weight: 500; color: var(--text-secondary);
-  text-decoration: none; padding: 8px 14px; border-radius: var(--radius-sm);
-}
-.nav-link.active { color: var(--primary-dark); font-weight: 600; }
-.btn-nav-ghost {
-  background: transparent; color: var(--text-secondary);
-  font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
-  padding: 9px 18px; border-radius: var(--radius-sm);
-  border: 1.5px solid rgba(95,125,117,0.22); cursor: pointer;
-}
+    /* SE BOX */
+    .se-box{background:linear-gradient(135deg,rgba(111,227,193,.1),rgba(168,240,220,.08));border:1px solid rgba(111,227,193,.35);border-radius:var(--radius-md);padding:14px 16px;font-size:13px;color:var(--text-secondary);line-height:1.8}
+    .se-box-item{display:flex;gap:8px;align-items:flex-start}
+    .se-box-item::before{content:'•';color:var(--primary-dark);font-weight:700;flex-shrink:0;margin-top:1px}
 
-.page {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 48px 24px 80px;
-}
+    /* DIVIDER */
+    .form-divider{height:1px;background:rgba(111,227,193,.15);grid-column:1/-1;margin:4px 0}
 
-.hero {
-  display: grid;
-  grid-template-columns: 1.1fr .9fr;
-  gap: 24px;
-  margin-bottom: 28px;
-}
+    /* ALERTS */
+    .alert{padding:12px 16px;border-radius:var(--radius-md);font-size:14px;display:none;gap:10px;align-items:flex-start;margin-bottom:18px}
+    .alert.visible{display:flex}
+    .alert-error{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+    .alert-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
 
-.hero-card, .form-card {
-  background: var(--surface);
-  border-radius: var(--radius-xl);
-  border: 1px solid rgba(111,227,193,0.2);
-  box-shadow: var(--shadow-lg);
-}
+    /* PRIVACY */
+    .privacy-box{padding:14px 18px;border-radius:var(--radius-lg);background:rgba(111,227,193,.07);border:1px solid rgba(111,227,193,.2);color:var(--text-secondary);line-height:1.6;font-size:13px;margin:20px 0}
 
-.hero-card {
-  padding: 32px;
-  position: relative;
-  overflow: hidden;
-}
+    /* ACTIONS */
+    .actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Inter',sans-serif;font-weight:600;font-size:15px;padding:13px 24px;border-radius:var(--radius-md);border:none;cursor:pointer;text-decoration:none;transition:all .2s}
+    .btn-primary{background:var(--primary-dark);color:white;box-shadow:0 4px 20px rgba(59,198,164,.28)}
+    .btn-primary:hover{background:#2eaf90;transform:translateY(-2px)}
+    .btn-ghost{background:transparent;color:var(--text-secondary);border:1.5px solid rgba(95,125,117,.25)}
+    .btn-ghost:hover{border-color:var(--primary);color:var(--text-primary);background:rgba(111,227,193,.06)}
+    .btn-sm{padding:8px 16px;font-size:13px;border-radius:var(--radius-sm)}
+    .btn-danger{background:transparent;color:#C53030;border:1.5px solid rgba(197,48,48,.25)}
+    .btn-danger:hover{background:rgba(229,62,62,.06);border-color:#C53030}
 
-.hero-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at top right, rgba(111,227,193,0.2), transparent 35%),
-    linear-gradient(135deg, rgba(111,227,193,0.08), rgba(255,255,255,0));
-  pointer-events: none;
-}
+    /* SPINNER */
+    .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none}
+    .spinner.visible{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none}
+    input[type="number"]{-moz-appearance:textfield}
+    .form-textarea{min-height:72px;resize:vertical}
+    .alert.visible{margin-bottom:20px}
 
-.hero-card > * { position: relative; z-index: 1; }
-.eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(111,227,193,0.12);
-  border: 1px solid rgba(111,227,193,0.26);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 12px; font-weight: 600; color: var(--primary-dark);
-  margin-bottom: 16px;
-}
+    /* PLANS */
+    .plans-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .plans-header h2{font-size:22px}
+    .plans-list{display:flex;flex-direction:column;gap:12px}
+    .plan-item{background:var(--bg);border:1px solid rgba(111,227,193,.2);border-radius:var(--radius-lg);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:border-color .2s,box-shadow .2s}
+    .plan-item:hover{border-color:var(--primary-dark);box-shadow:0 4px 16px rgba(59,198,164,.1)}
+    .plan-item-doenca{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;color:var(--text-primary);margin-bottom:3px}
+    .plan-item-meta{font-size:12px;color:var(--text-secondary)}
+    .plan-item-actions{display:flex;gap:8px;flex-shrink:0}
+    .plans-empty{text-align:center;padding:36px 20px;color:var(--text-secondary);font-size:14px}
+    .plans-empty a{color:var(--primary-dark);font-weight:600;text-decoration:none}
 
-.hero-card h1 {
-  font-size: clamp(30px, 4vw, 42px);
-  line-height: 1.08;
-  margin-bottom: 14px;
-}
+    /* MODAL */
+    .plan-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:24px}
+    .plan-modal-overlay.visible{display:flex}
+    .plan-modal{background:var(--surface);border-radius:var(--radius-xl);max-width:700px;width:100%;max-height:82vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.2)}
+    .plan-modal-header{background:linear-gradient(135deg,var(--primary-dark),#2eaf90);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;border-radius:var(--radius-xl) var(--radius-xl) 0 0;position:sticky;top:0}
+    .plan-modal-header h3{color:white;font-size:18px}
+    .plan-modal-close{background:rgba(255,255,255,.2);border:none;color:white;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center}
+    .plan-modal-body{padding:28px;font-size:14px;line-height:1.8;color:var(--text-primary)}
+    .plan-modal-body strong{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;display:block;margin:18px 0 6px;padding-bottom:5px;border-bottom:2px solid rgba(111,227,193,.25)}
+    .plan-modal-body strong:first-child{margin-top:0}
+    .plan-modal-body p{margin-bottom:10px}
+    .plan-modal-body ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+    .plan-modal-body li{display:flex;align-items:flex-start;gap:7px;font-size:13px}
+    .plan-modal-body li::before{content:'•';color:var(--primary-dark);font-weight:700;flex-shrink:0;margin-top:1px}
 
-.hero-card p {
-  color: var(--text-secondary);
-  line-height: 1.7;
-  max-width: 55ch;
-}
-
-.aside {
-  background: linear-gradient(180deg, #1F2D2A, #28423D);
-  color: rgba(255,255,255,0.88);
-  border-radius: var(--radius-xl);
-  padding: 28px;
-  box-shadow: var(--shadow-md);
-}
-
-.aside h2 { font-size: 18px; margin-bottom: 14px; }
-.aside ul { list-style: none; display: grid; gap: 12px; }
-.aside li {
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  background: rgba(255,255,255,0.06);
-  line-height: 1.5;
-  font-size: 14px;
-}
-
-.form-card {
-  padding: 32px;
-}
-
-.section-title {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
-  margin-bottom: 22px;
-}
-
-.section-title h2 { font-size: 24px; }
-.section-title p { color: var(--text-secondary); font-size: 14px; }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.full { grid-column: 1 / -1; }
-
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-label { font-size: 13px; font-weight: 600; }
-.form-hint { font-size: 12px; color: var(--text-secondary); }
-.form-error { font-size: 12px; color: var(--error); display: none; }
-.form-error.visible { display: block; }
-
-.form-input, .form-textarea {
-  width: 100%;
-  padding: 13px 16px;
-  border: 1.5px solid rgba(95,125,117,0.22);
-  border-radius: var(--radius-md);
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  background: var(--surface);
-  color: var(--text-primary);
-  outline: none;
-}
-
-.form-input:focus, .form-textarea:focus {
-  border-color: var(--primary-dark);
-  box-shadow: 0 0 0 3px rgba(111,227,193,0.2);
-}
-
-.form-textarea { min-height: 108px; resize: vertical; }
-.input-error { border-color: var(--error) !important; }
-
-.alert {
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  display: none;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-
-.alert.visible { display: flex; }
-.alert-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
-.alert-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
-
-.privacy-box {
-  margin: 22px 0;
-  padding: 16px 18px;
-  border-radius: var(--radius-lg);
-  background: rgba(111,227,193,0.08);
-  border: 1px solid rgba(111,227,193,0.22);
-  color: var(--text-secondary);
-  line-height: 1.6;
-  font-size: 14px;
-}
-
-.actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px;
-  padding: 13px 24px; border-radius: var(--radius-md); border: none;
-  cursor: pointer; text-decoration: none;
-}
-
-.btn-primary {
-  background: var(--primary-dark);
-  color: white;
-  box-shadow: 0 4px 20px rgba(59,198,164,0.28);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1.5px solid rgba(95,125,117,0.25);
-}
-
-.spinner {
-  width: 18px; height: 18px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-  display: none;
-}
-
-.spinner.visible { display: block; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-@media (max-width: 860px) {
-  nav { padding: 0 20px; }
-  .hero { grid-template-columns: 1fr; }
-  .grid { grid-template-columns: 1fr; }
-}
+    @media(max-width:860px){nav{padding:0 20px}.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <nav>
     <a href="index.html" class="nav-brand">
-      <div class="logo-slot">🌿</div>
-      <span class="site-name">UpWell</span>
+      <img src="logo.png" style="width:38px;height:38px;border-radius:8px;object-fit:cover">
+      <span class="site-name"><span style="color:var(--primary-dark)">Up</span>Well</span>
     </a>
     <div class="nav-links" id="nav-links"></div>
   </nav>
 
   <main class="page">
-    <section class="hero">
-      <div class="hero-card">
-        <div class="eyebrow">Perfil segregado por token interno</div>
-        <h1>Perfil clinico separado da conta de email</h1>
-        <p>Os dados pessoais e clinicos sao guardados noutra base de dados. A ligacao entre autenticacao e perfil e feita apenas por um token interno do servidor, nunca pelo email.</p>
-      </div>
 
-      <aside class="aside">
-        <h2>O que fica aqui</h2>
-        <ul>
-          <li>Idade, peso e altura para contextualizar as recomendacoes.</li>
-          <li>Alergias, condicoes e medicacao habitual para evitar planos perigosos.</li>
-          <li>Notas adicionais para limites que nao cabem nas escolhas rapidas.</li>
-        </ul>
-      </aside>
-    </section>
+    <!-- HERO -->
+    <div style="margin-bottom:32px">
+      <h1 style="font-family:'Poppins',sans-serif;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1px;margin-bottom:8px">O teu perfil</h1>
+      <p style="color:var(--text-secondary);font-size:15px">Os teus dados clínicos e planos gerados — guardados em segurança, separados da tua conta.</p>
+    </div>
 
+    <!-- FORM -->
     <section class="form-card">
       <div class="section-title">
         <div>
@@ -292,53 +161,64 @@ nav {
         </div>
       </div>
 
-      <div class="alert alert-error" id="alert">
-        <span>⚠</span><span class="alert-msg"></span>
-      </div>
+      <div class="alert alert-error" id="alert"><span id="alert-icon">⚠</span><span class="alert-msg"></span></div>
 
-      <form class="grid" onsubmit="event.preventDefault(); saveProfile();">
+      <div class="grid">
         <div class="form-group">
           <label class="form-label" for="age">Idade</label>
           <input class="form-input" type="number" id="age" min="0" max="120" placeholder="Ex: 34">
           <span class="form-error" id="age-error"></span>
         </div>
-
         <div class="form-group">
           <label class="form-label" for="weightKg">Peso (kg)</label>
           <input class="form-input" type="number" id="weightKg" min="0" step="0.1" placeholder="Ex: 68.5">
           <span class="form-error" id="weightKg-error"></span>
         </div>
-
-        <div class="form-group">
+        <div class="form-group full">
           <label class="form-label" for="heightCm">Altura (cm)</label>
           <input class="form-input" type="number" id="heightCm" min="0" step="0.1" placeholder="Ex: 172">
           <span class="form-error" id="heightCm-error"></span>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="medications">Medicacao habitual</label>
-          <input class="form-input" type="text" id="medications" placeholder="Ex: Metformina, Lisinopril">
-          <span class="form-hint">Separado da conta de autenticacao.</span>
+        <div class="form-divider"></div>
+
+        <!-- DOENÇA -->
+        <div class="form-group full">
+          <label class="form-label" for="doenca-perfil">Doença principal</label>
+          <select class="form-select" id="doenca-perfil" onchange="onDoencaChange()">
+            <option value="">Seleciona a tua doença…</option>
+          </select>
         </div>
 
-        <div class="form-group full">
-          <label class="form-label" for="allergies">Alergias e restricoes clinicas</label>
-          <textarea class="form-textarea" id="allergies" placeholder="Ex: amendoim, lactose, gluten, intolerancia a marisco"></textarea>
+        <!-- MEDICAMENTO (aparece após selecionar doença) -->
+        <div class="form-group full" id="med-group" style="display:none">
+          <label class="form-label" for="medicamento-perfil">Medicamento <span class="form-label-sub">(opcional)</span></label>
+          <select class="form-select" id="medicamento-perfil" onchange="onMedChange()">
+            <option value="">Seleciona o medicamento…</option>
+          </select>
         </div>
 
-        <div class="form-group full">
-          <label class="form-label" for="medicalConditions">Condicoes de saude relevantes</label>
-          <textarea class="form-textarea" id="medicalConditions" placeholder="Ex: diabetes tipo 2, hipertensao, refluxo"></textarea>
+        <!-- EFEITOS SECUNDÁRIOS (aparece após selecionar medicamento) -->
+        <div class="form-group full" id="se-group" style="display:none">
+          <label class="form-label">Efeitos secundários identificados</label>
+          <div class="se-box" id="se-list"></div>
+          <span class="form-hint">A IA usará estes efeitos para criar planos que os contrabalancem.</span>
         </div>
 
+        <div class="form-divider"></div>
+
         <div class="form-group full">
-          <label class="form-label" for="notes">Notas adicionais</label>
-          <textarea class="form-textarea" id="notes" placeholder="Ex: evitar jejum prolongado, prefere refeicoes simples, pratica pouco exercicio"></textarea>
+          <label class="form-label" for="allergies">Alergias e restrições alimentares <span class="form-label-sub">(opcional)</span></label>
+          <textarea class="form-textarea" id="allergies" placeholder="Ex: amendoim, lactose, glúten, marisco…"></textarea>
         </div>
-      </form>
+        <div class="form-group full">
+          <label class="form-label" for="notes">Notas adicionais <span class="form-label-sub">(opcional)</span></label>
+          <textarea class="form-textarea" id="notes" placeholder="Ex: evitar jejum prolongado, prefere refeições simples, pratica pouco exercício…"></textarea>
+        </div>
+      </div>
 
       <div class="privacy-box">
-        O email fica apenas na base de autenticacao. Este perfil fica numa base separada e e identificado por um token interno indisponivel para o browser. So acessos de desenvolvimento autorizados podem consultar um perfil diretamente por token, quando `DEV_ACCESS_TOKEN` estiver configurado.
+        🔒 O email fica apenas na base de autenticação. Este perfil fica numa base separada identificada por token interno — nunca exposto ao browser.
       </div>
 
       <div class="actions">
@@ -349,65 +229,149 @@ nav {
         <a href="gerar.html" class="btn btn-ghost">Ir para gerar plano</a>
       </div>
     </section>
+
+    <!-- PLANOS ANTERIORES -->
+    <section class="form-card">
+      <div class="plans-header">
+        <div>
+          <h2>Planos anteriores</h2>
+          <p style="color:var(--text-secondary);font-size:14px;margin-top:4px">Os teus planos gerados ficam guardados aqui.</p>
+        </div>
+        <a href="gerar.html" class="btn btn-primary btn-sm">+ Novo plano</a>
+      </div>
+      <div class="plans-list" id="plans-list">
+        <div class="plans-empty">A carregar...</div>
+      </div>
+    </section>
+
   </main>
 
+  <!-- MODAL -->
+  <div class="plan-modal-overlay" id="plan-modal">
+    <div class="plan-modal">
+      <div class="plan-modal-header">
+        <h3 id="modal-title">Plano</h3>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="plan-modal-close" onclick="downloadModalPlano()" style="width:auto;padding:0 14px;border-radius:20px;font-size:13px;display:inline-flex;align-items:center;gap:5px" id="btn-download-modal">⬇ PDF</button>
+          <button class="plan-modal-close" onclick="closeModal()">✕</button>
+        </div>
+      </div>
+      <div class="plan-modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
   <script src="auth.js"></script>
   <script>
     Auth.requireAuth('login.html');
     renderNav('profile');
 
+    // ── POPULATE DISEASE SELECT ──────────────────────────────────────────
+    const doencaEl = document.getElementById('doenca-perfil');
+    Object.keys(DATA_MEDICAMENTOS).forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d; opt.textContent = d;
+      doencaEl.appendChild(opt);
+    });
+
+    function onDoencaChange() {
+      const doenca = doencaEl.value;
+      const medEl = document.getElementById('medicamento-perfil');
+      const medGroup = document.getElementById('med-group');
+      const seGroup = document.getElementById('se-group');
+
+      medEl.innerHTML = '<option value="">Seleciona o medicamento…</option>';
+      seGroup.style.display = 'none';
+
+      if (doenca && DATA_MEDICAMENTOS[doenca]) {
+        // Add "nenhum" option
+        const nenhum = document.createElement('option');
+        nenhum.value = ''; nenhum.textContent = 'Nenhum / não sei';
+        medEl.appendChild(nenhum);
+        Object.keys(DATA_MEDICAMENTOS[doenca]).forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m; opt.textContent = m;
+          medEl.appendChild(opt);
+        });
+        medGroup.style.display = 'block';
+      } else {
+        medGroup.style.display = 'none';
+      }
+    }
+
+    function onMedChange() {
+      const doenca = doencaEl.value;
+      const med = document.getElementById('medicamento-perfil').value;
+      const seGroup = document.getElementById('se-group');
+      const seList = document.getElementById('se-list');
+
+      if (doenca && med && DATA_MEDICAMENTOS[doenca]?.[med]) {
+        const effects = DATA_MEDICAMENTOS[doenca][med];
+        seList.innerHTML = effects.map(e => `<div class="se-box-item">${e}</div>`).join('');
+        seGroup.style.display = 'block';
+      } else {
+        seGroup.style.display = 'none';
+      }
+    }
+
+    // ── LOAD PROFILE ────────────────────────────────────────────────────
     loadProfile();
 
     async function loadProfile() {
       try {
         const { data } = await Auth.apiFetch('/profile/me');
-        if (!data.ok) {
-          showAlert('alert', data.error || 'Nao foi possivel carregar o perfil.');
-          return;
+        if (!data.ok || !data.profile) return;
+        const p = data.profile;
+
+        document.getElementById('age').value = p.age ?? '';
+        document.getElementById('weightKg').value = p.weightKg ?? '';
+        document.getElementById('heightCm').value = p.heightCm ?? '';
+        document.getElementById('allergies').value = p.allergies || '';
+        document.getElementById('notes').value = p.notes || '';
+
+        // Restore disease/medication selects
+        if (p.medicalConditions && DATA_MEDICAMENTOS[p.medicalConditions]) {
+          doencaEl.value = p.medicalConditions;
+          onDoencaChange();
+          if (p.medications) {
+            const medEl = document.getElementById('medicamento-perfil');
+            medEl.value = p.medications;
+            onMedChange();
+          }
         }
 
-        if (!data.profile) return;
-
-        document.getElementById('age').value = data.profile.age ?? '';
-        document.getElementById('weightKg').value = data.profile.weightKg ?? '';
-        document.getElementById('heightCm').value = data.profile.heightCm ?? '';
-        document.getElementById('allergies').value = data.profile.allergies || '';
-        document.getElementById('medicalConditions').value = data.profile.medicalConditions || '';
-        document.getElementById('medications').value = data.profile.medications || '';
-        document.getElementById('notes').value = data.profile.notes || '';
         Auth.updateSession({ hasProfile: Boolean(data.hasProfile) });
       } catch {
-        showAlert('alert', 'Servidor inacessivel. Confirma que o servidor esta a correr.');
+        showAlert('alert', 'Servidor inacessível. Confirma que o servidor está a correr.');
       }
     }
 
+    // ── SAVE PROFILE ────────────────────────────────────────────────────
     async function saveProfile() {
       ['age', 'weightKg', 'heightCm'].forEach(clearError);
       hideAlert('alert');
+
+      const doenca = doencaEl.value;
+      const med = document.getElementById('medicamento-perfil').value;
+      const sideEffects = (doenca && med && DATA_MEDICAMENTOS[doenca]?.[med])
+        ? DATA_MEDICAMENTOS[doenca][med].join(' ')
+        : '';
 
       const payload = {
         age: document.getElementById('age').value.trim(),
         weightKg: document.getElementById('weightKg').value.trim(),
         heightCm: document.getElementById('heightCm').value.trim(),
         allergies: document.getElementById('allergies').value.trim(),
-        medicalConditions: document.getElementById('medicalConditions').value.trim(),
-        medications: document.getElementById('medications').value.trim(),
+        medicalConditions: doenca,
+        medications: med,
+        sideEffects,
         notes: document.getElementById('notes').value.trim()
       };
 
       let valid = true;
-      if (payload.age && (Number(payload.age) < 0 || Number(payload.age) > 120)) {
-        showError('age', 'Idade invalida.');
-        valid = false;
-      }
-      if (payload.weightKg && Number(payload.weightKg) <= 0) {
-        showError('weightKg', 'Peso invalido.');
-        valid = false;
-      }
-      if (payload.heightCm && Number(payload.heightCm) <= 0) {
-        showError('heightCm', 'Altura invalida.');
-        valid = false;
-      }
+      if (payload.age && (Number(payload.age) < 0 || Number(payload.age) > 120)) { showError('age', 'Idade inválida.'); valid = false; }
+      if (payload.weightKg && Number(payload.weightKg) <= 0) { showError('weightKg', 'Peso inválido.'); valid = false; }
+      if (payload.heightCm && Number(payload.heightCm) <= 0) { showError('heightCm', 'Altura inválida.'); valid = false; }
       if (!valid) return;
 
       setLoading('btn-save', 'spinner', true);
@@ -423,18 +387,108 @@ nav {
         setLoading('btn-save', 'spinner', false);
         document.getElementById('btn-text').textContent = 'Guardar perfil';
 
-        if (!data.ok) {
-          showAlert('alert', data.error || 'Nao foi possivel guardar o perfil.');
-          return;
-        }
+        if (!data.ok) { showAlert('alert', data.error || 'Não foi possível guardar o perfil.'); return; }
 
         Auth.updateSession({ hasProfile: true });
         showAlert('alert', 'Perfil guardado com sucesso.', 'success');
       } catch {
         setLoading('btn-save', 'spinner', false);
         document.getElementById('btn-text').textContent = 'Guardar perfil';
-        showAlert('alert', 'Servidor inacessivel. Confirma que o servidor esta a correr.');
+        showAlert('alert', 'Servidor inacessível.');
       }
+    }
+
+    // ── PLANS ───────────────────────────────────────────────────────────
+    loadPlanos();
+
+    async function loadPlanos() {
+      try {
+        const { data } = await Auth.apiFetch('/planos');
+        const list = document.getElementById('plans-list');
+        if (!data.ok || !data.planos?.length) {
+          list.innerHTML = '<div class="plans-empty">Ainda não geraste nenhum plano. <a href="gerar.html">Gera o primeiro!</a></div>';
+          return;
+        }
+        list.innerHTML = data.planos.map(p => {
+          const date = new Date(p.criado_em).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' });
+          const cats = p.categorias ? ` · ${p.categorias}` : '';
+          return `<div class="plan-item">
+            <div>
+              <div class="plan-item-doenca">${p.doenca}</div>
+              <div class="plan-item-meta">${date}${cats}</div>
+            </div>
+            <div class="plan-item-actions">
+              <button class="btn btn-ghost btn-sm" onclick="verPlano(${p.id}, '${p.doenca}')">Ver plano</button>
+              <button class="btn btn-danger btn-sm" onclick="apagarPlano(${p.id})">Apagar</button>
+            </div>
+          </div>`;
+        }).join('');
+      } catch {
+        document.getElementById('plans-list').innerHTML = '<div class="plans-empty">Erro ao carregar planos.</div>';
+      }
+    }
+
+    async function verPlano(id, doenca) {
+      const { data } = await Auth.apiFetch(`/planos/${id}`);
+      if (!data.ok) return;
+      document.getElementById('modal-title').textContent = doenca;
+      document.getElementById('modal-body').innerHTML = renderPlanText(data.plano);
+      document.getElementById('plan-modal').classList.add('visible');
+    }
+
+    function closeModal() { document.getElementById('plan-modal').classList.remove('visible'); }
+    document.getElementById('plan-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+    async function apagarPlano(id) {
+      if (!confirm('Tens a certeza que queres apagar este plano?')) return;
+      await Auth.apiFetch(`/planos/${id}`, { method: 'DELETE' });
+      loadPlanos();
+    }
+
+    async function downloadModalPlano() {
+      const btn = document.getElementById('btn-download-modal');
+      const original = btn.innerHTML;
+      btn.innerHTML = '…';
+      btn.disabled = true;
+      try {
+        const { jsPDF } = window.jspdf;
+        const el = document.getElementById('modal-body');
+        const doenca = document.getElementById('modal-title').textContent;
+        const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+        const img = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+        const imgW = pageW;
+        const imgH = (canvas.height * imgW) / canvas.width;
+        if (imgH <= pageH) {
+          pdf.addImage(img, 'PNG', 0, 0, imgW, imgH);
+        } else {
+          let y = 0;
+          while (y < imgH) {
+            if (y > 0) pdf.addPage();
+            pdf.addImage(img, 'PNG', 0, -y, imgW, imgH);
+            y += pageH;
+          }
+        }
+        pdf.save('plano-upwell-' + doenca + '.pdf');
+      } catch (err) {
+        alert('Erro ao gerar PDF.');
+      }
+      btn.innerHTML = original;
+      btn.disabled = false;
+    }
+
+    function renderPlanText(text) {
+      return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^[•\-] (.+)$/gm, '<li>$1</li>')
+        .split('\n\n')
+        .map(block => {
+          if (block.includes('<li>')) return '<ul>' + block + '</ul>';
+          if (block.includes('<strong>')) return block;
+          return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+        }).join('');
     }
   </script>
 </body>
