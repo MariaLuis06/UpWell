@@ -60,6 +60,9 @@
     @media print{nav,.result-actions,.ephem-notice{display:none}.plan-card{box-shadow:none;border:1px solid #ddd}}
     @media(max-width:768px){nav{padding:0 20px}.nav-links .nav-link{display:none}}
     @media(max-width:600px){.plan-card-body{padding:20px}.result-actions{flex-direction:column}.result-actions .btn{width:100%;justify-content:center}}
+
+    .footer-mini {background: var(--text-primary); color: rgba(255,255,255,0.4);text-align: center; font-size: 12px; padding: 20px;}
+    .footer-mini a { color: var(--primary); text-decoration: none; }
   </style>
 </head>
 <body>
@@ -270,5 +273,8 @@
     btn.disabled = false;
   }
 </script>
+<div class="footer-mini">
+  <a href="index.html">UpWell</a> · Projeto de hackathon · Privacy by design
+</div>
 </body>
 </html>
