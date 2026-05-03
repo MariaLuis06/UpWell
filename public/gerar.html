@@ -158,8 +158,7 @@
     </div>
 
     <div class="privacy-ephemeral">
-      <span>🔒</span>
-      <span><strong>Separação por design:</strong> o seu perfil clínico pode estar guardado noutra base de dados, mas o plano gerado continua a ser efémero e não é persistido.</span>
+      <span><strong>Aviso Legal:</strong> O conteúdo gerado pela UpWell tem carácter meramente informativo e educacional. As sugestões de alimentação e exercício físico apresentadas não substituem a consulta, diagnóstico ou tratamento médico. Antes de fazer alterações significativas à sua dieta, rotina de exercício ou medicação, consulta sempre um profissional de saúde qualificado. A UpWell não se responsabiliza por decisões tomadas com base na informação aqui apresentada.</span>
     </div>
 
     <div class="alert alert-error" id="alert-gen" style="display:none">
@@ -321,28 +320,32 @@
       if (!data?.profile) return;
 
       const profile = data.profile;
-      const medsInput = document.getElementById('medicamentos');
       const restricoesInput = document.getElementById('restricoes');
 
-      if (profile.medications) {
-        const medEl = document.getElementById('medicamentos');
-        if (medEl.querySelector(`option[value="${profile.medications}"]`)) {
-          medEl.value = profile.medications;
-          onMedGerarChange();
-        }
-      }
+      // 1. Fill allergies
       if (!restricoesInput.value && profile.allergies) {
         restricoesInput.value = profile.allergies;
       }
 
+      // 2. Select disease first (this populates medication select)
       if (profile.medicalConditions && !doencaEl.value) {
         if (DATA[profile.medicalConditions]) {
           doencaEl.value = profile.medicalConditions;
-          onDoencaChange();
+          onDoencaChange(); // populates medication select
+        }
+      }
+
+      // 3. Only AFTER disease is selected, restore medication
+      if (profile.medications) {
+        const medEl = document.getElementById('medicamentos');
+        const opt = medEl.querySelector(`option[value="${profile.medications}"]`);
+        if (opt) {
+          medEl.value = profile.medications;
+          onMedGerarChange();
         }
       }
     } catch {
-      // Ignore profile hydration failures here; the page can still be used manually.
+      // Ignore profile hydration failures; page can still be used manually.
     }
   }
 
