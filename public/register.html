@@ -273,9 +273,9 @@ nav {
     <div class="auth-form">
       <div class="form-group">
         <label class="form-label" for="email">Email</label>
-        <input class="form-input" type="email" id="email" placeholder="o.teu@email.com" autocomplete="email">
+        <input class="form-input" type="email" id="email" placeholder="o.seu@email.com" autocomplete="email">
         <span class="form-error" id="email-error"></span>
-        <span class="form-hint">Guardado separadamente dos teus dados de uso</span>
+        <span class="form-hint">Guardado separadamente dos seus dados de utilização</span>
       </div>
 
       <div class="form-group">
@@ -307,7 +307,7 @@ nav {
     </div>
 
     <div class="auth-footer">
-      Já tens conta? <a href="login.html">Entrar</a>
+      Já tem conta? <a href="login.html">Iniciar sessão</a>
     </div>
   </div>
 </div>
@@ -353,7 +353,7 @@ nav {
     hideAlert('alert');
     let valid = true;
 
-    if (!email) { showError('email', 'Insere o teu email.'); valid = false; }
+    if (!email) { showError('email', 'Introduza o seu email.'); valid = false; }
     else if (!/\S+@\S+\.\S+/.test(email)) { showError('email', 'Email inválido.'); valid = false; }
     if (pw.length < 8) { showError('password', 'Mínimo 8 caracteres.'); valid = false; }
     if (pw !== pw2) { showError('password2', 'As passwords não coincidem.'); valid = false; }

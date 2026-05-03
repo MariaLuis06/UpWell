@@ -157,8 +157,8 @@
 
     <!-- HERO -->
     <div style="margin-bottom:32px">
-      <h1 style="font-family:'Poppins',sans-serif;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1px;margin-bottom:8px">O teu perfil</h1>
-      <p style="color:var(--text-secondary);font-size:15px">Os teus dados clínicos e planos gerados — guardados em segurança, separados da tua conta.</p>
+      <h1 style="font-family:'Poppins',sans-serif;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1px;margin-bottom:8px">O seu perfil</h1>
+      <p style="color:var(--text-secondary);font-size:15px">Os seus dados clínicos e planos gerados — guardados em segurança, separados da sua conta.</p>
     </div>
 
     <!-- FORM -->
@@ -166,7 +166,7 @@
       <div class="section-title">
         <div>
           <h2>Dados de perfil</h2>
-          <p>Podes atualizar estes dados a qualquer momento.</p>
+          <p>Pode atualizar estes dados a qualquer momento.</p>
         </div>
       </div>
 
@@ -195,7 +195,7 @@
         <div class="form-group full">
           <label class="form-label" for="doenca-perfil">Doença principal</label>
           <select class="form-select" id="doenca-perfil" onchange="onDoencaChange()">
-            <option value="">Seleciona a tua doença…</option>
+            <option value="">Selecione a sua doença…</option>
           </select>
         </div>
 
@@ -244,7 +244,7 @@
       <div class="plans-header">
         <div>
           <h2>Planos anteriores</h2>
-          <p style="color:var(--text-secondary);font-size:14px;margin-top:4px">Os teus planos gerados ficam guardados aqui.</p>
+          <p style="color:var(--text-secondary);font-size:14px;margin-top:4px">Os seus planos gerados ficam guardados aqui.</p>
         </div>
         <a href="gerar.html" class="btn btn-primary btn-sm">+ Novo plano</a>
       </div>
@@ -415,7 +415,7 @@
         const { data } = await Auth.apiFetch('/planos');
         const list = document.getElementById('plans-list');
         if (!data.ok || !data.planos?.length) {
-          list.innerHTML = '<div class="plans-empty">Ainda não geraste nenhum plano. <a href="gerar.html">Gera o primeiro!</a></div>';
+          list.innerHTML = '<div class="plans-empty">Ainda não gerou nenhum plano. <a href="gerar.html">Gere o primeiro.</a></div>';
           return;
         }
         list.innerHTML = data.planos.map(p => {
@@ -449,7 +449,7 @@
     document.getElementById('plan-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 
     async function apagarPlano(id) {
-      if (!confirm('Tens a certeza que queres apagar este plano?')) return;
+      if (!confirm('Tem a certeza de que pretende apagar este plano?')) return;
       await Auth.apiFetch(`/planos/${id}`, { method: 'DELETE' });
       loadPlanos();
     }

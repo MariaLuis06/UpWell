@@ -105,8 +105,8 @@
 <div class="page-wrap">
   <div class="page-header">
     <div class="badge">✦ Geração de plano</div>
-    <h1>O teu plano personalizado</h1>
-    <p>Diz-nos a tua condição e onde te queres focar. A IA cria um plano adaptado a ti.</p>
+    <h1>O seu plano personalizado</h1>
+    <p>Indique a sua condição e a área em que se pretende focar. A IA cria um plano adaptado a si.</p>
   </div>
 
   <div class="form-card">
@@ -115,14 +115,14 @@
     <div class="form-group">
       <label class="form-label" for="doenca">Condição de saúde</label>
       <select class="form-select" id="doenca" onchange="onDoencaChange()">
-        <option value="">Seleciona a tua condição…</option>
+        <option value="">Selecione a sua condição…</option>
       </select>
       <span class="form-error" id="doenca-error"></span>
     </div>
 
     <!-- CATEGORIAS -->
     <div class="form-group" id="cat-group" style="display:none">
-      <label class="form-label">Em que área te queres focar? <span class="form-label-sub">(podes escolher mais do que uma)</span></label>
+      <label class="form-label">Em que área se pretende focar? <span class="form-label-sub">(pode escolher mais do que uma)</span></label>
       <div class="cat-grid" id="cat-buttons"></div>
       <span class="form-error" id="cat-error"></span>
     </div>
@@ -138,13 +138,13 @@
         <select class="form-select" id="medicamentos" onchange="onMedGerarChange()">
           <option value="">Nenhum / não sei</option>
         </select>
-        <span class="optional-hint">Se não selecionares, o plano baseia-se apenas na tua condição.</span>
+        <span class="optional-hint">Se não selecionar, o plano baseia-se apenas na sua condição.</span>
       </div>
       <!-- efeitos secundários do medicamento selecionado -->
       <div id="se-med-gerar" style="display:none;background:rgba(111,227,193,.06);border:1px solid rgba(111,227,193,.25);border-radius:var(--radius-md);padding:12px 16px;font-size:13px;color:var(--text-secondary);line-height:1.7"></div>
 
       <div class="form-group">
-        <label class="form-label" for="restricoes">Alimentos que não queres no plano <span class="form-label-sub">(opcional)</span></label>
+        <label class="form-label" for="restricoes">Alimentos que não pretende no plano <span class="form-label-sub">(opcional)</span></label>
         <input class="form-input" type="text" id="restricoes" placeholder="Ex: peixe, amendoins, laticínios… (separa por vírgula)">
       </div>
     </div>
@@ -153,13 +153,13 @@
     <div class="se-preview" id="se-preview">
       <div class="se-preview-label">Recomendações identificadas</div>
       <div id="se-list">
-        <span class="se-empty">Seleciona uma condição e área para ver as recomendações</span>
+        <span class="se-empty">Selecione uma condição e uma área para ver as recomendações</span>
       </div>
     </div>
 
     <div class="privacy-ephemeral">
       <span>🔒</span>
-      <span><strong>Separação por design:</strong> o teu perfil clínico pode estar guardado noutra base de dados, mas o plano gerado continua a ser efémero e não é persistido.</span>
+      <span><strong>Separação por design:</strong> o seu perfil clínico pode estar guardado noutra base de dados, mas o plano gerado continua a ser efémero e não é persistido.</span>
     </div>
 
     <div class="alert alert-error" id="alert-gen" style="display:none">
@@ -167,7 +167,7 @@
     </div>
 
     <button class="btn btn-primary btn-full btn-generate" id="btn-gerar" onclick="gerarPlano()">
-      <span id="btn-text">Gerar o meu plano</span>
+      <span id="btn-text">Gerar o seu plano</span>
       <div class="spinner" id="spinner"></div>
     </button>
 
@@ -200,7 +200,7 @@
     const catGroup = document.getElementById('cat-group');
     const catButtons = document.getElementById('cat-buttons');
     catButtons.innerHTML = '';
-    document.getElementById('se-list').innerHTML = '<span class="se-empty">Seleciona uma área para ver as recomendações</span>';
+    document.getElementById('se-list').innerHTML = '<span class="se-empty">Selecione uma área para ver as recomendações</span>';
 
     // Populate medication select from DATA_MEDICAMENTOS
     const medGroup = document.getElementById('med-gerar-group');
@@ -282,7 +282,7 @@
     const restricoes = document.getElementById('restricoes').value.trim();
     clearError('doenca'); clearError('cat');
     let valid = true;
-    if (!doenca) { showError('doenca', 'Seleciona a tua condição.'); valid = false; }
+    if (!doenca) { showError('doenca', 'Selecione a sua condição.'); valid = false; }
     if (selectedCats.size === 0) { showError('cat', 'Seleciona pelo menos uma área.'); valid = false; }
     if (!valid) return;
 
@@ -305,12 +305,12 @@
         window.location.href = 'resultado.html';
       } else {
         setLoading('btn-gerar', 'spinner', false);
-        document.getElementById('btn-text').textContent = 'Gerar o meu plano';
+        document.getElementById('btn-text').textContent = 'Gerar o seu plano';
         showAlert('alert-gen', 'Erro ao gerar o plano. Tenta de novo.');
       }
     } catch (err) {
       setLoading('btn-gerar', 'spinner', false);
-      document.getElementById('btn-text').textContent = 'Gerar o meu plano';
+      document.getElementById('btn-text').textContent = 'Gerar o seu plano';
       showAlert('alert-gen', 'Servidor inacessível. Confirma que o servidor está a correr.');
     }
   }

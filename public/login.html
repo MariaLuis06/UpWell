@@ -249,7 +249,7 @@ nav {
     <div class="auth-header">
       <img src="logo.png" style="width:52px;height:52px;border-radius:12px;object-fit:cover;margin:0 auto 16px;display:block;">
       <h1>Bem-vindo de volta</h1>
-      <p>Entra na tua conta para aceder aos teus planos</p>
+      <p>Inicie sessão na sua conta para aceder aos seus planos</p>
     </div>
 
     <div class="alert alert-error" id="alert">
@@ -259,7 +259,7 @@ nav {
     <div class="auth-form">
       <div class="form-group">
         <label class="form-label" for="email">Email</label>
-        <input class="form-input" type="email" id="email" placeholder="o.teu@email.com" autocomplete="email">
+        <input class="form-input" type="email" id="email" placeholder="o.seu@email.com" autocomplete="email">
         <span class="form-error" id="email-error"></span>
       </div>
 
@@ -269,11 +269,11 @@ nav {
         <span class="form-error" id="password-error"></span>
       </div>
 
-      <div class="forgot"><a href="#">Esqueceste a password?</a></div>
+      <div class="forgot"><a href="#">Esqueceu-se da palavra-passe?</a></div>
 
       <div class="privacy-note">
         <span>🔒</span>
-        <span>O teu email é guardado <strong>separadamente</strong> do perfil clínico. O perfil fica noutra base e é ligado apenas por token interno.</span>
+        <span>O seu email é guardado <strong>separadamente</strong> do perfil clínico. O perfil fica noutra base e é ligado apenas por token interno.</span>
       </div>
 
       <button class="btn btn-primary btn-full btn-submit" id="btn-login" onclick="handleLogin()">
@@ -283,7 +283,7 @@ nav {
     </div>
 
     <div class="auth-footer">
-      Ainda não tens conta? <a href="register.html">Criar conta grátis</a>
+      Ainda não tem conta? <a href="register.html">Criar conta gratuita</a>
     </div>
   </div>
 </div>
@@ -307,9 +307,9 @@ nav {
     clearError('email'); clearError('password'); hideAlert('alert');
     let valid = true;
 
-    if (!email) { showError('email', 'Insere o teu email.'); valid = false; }
+    if (!email) { showError('email', 'Introduza o seu email.'); valid = false; }
     else if (!/\S+@\S+\.\S+/.test(email)) { showError('email', 'Email inválido.'); valid = false; }
-    if (!password) { showError('password', 'Insere a tua password.'); valid = false; }
+    if (!password) { showError('password', 'Introduza a sua palavra-passe.'); valid = false; }
     if (!valid) return;
 
     setLoading('btn-login', 'spinner', true);
